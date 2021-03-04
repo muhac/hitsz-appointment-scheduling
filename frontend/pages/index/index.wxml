@@ -1,0 +1,20 @@
+<!--index.wxml-->
+<view class="container">
+  <view class="userinfo">
+    <button wx:if="{{!hasUserInfo && canIUse}}" open-type="getUserInfo" bindgetuserinfo="getUserInfo"> 获取头像昵称 </button>
+    <block wx:else>
+      <image bindtap="bindViewTap" class="userinfo-avatar" src="{{userInfo.avatarUrl}}" mode="cover"></image>
+      <text class="userinfo-nickname">{{userInfo.nickName}}</text>
+    </block>
+  </view>
+
+<view class="options">
+  <view class="button" hover-class="buttonHover" hover-stay-time="40" bindtap="gotoBook">预约咨询</view>
+  <view class="button" hover-class="buttonHover" hover-stay-time="40">我的预约</view>
+  <view class="button" hover-class="buttonHover" hover-stay-time="40" bindtap="gotoAdmin">管理中心</view>
+</view>
+
+  <view class="usermotto">
+    <text class="user-motto">Designed By Yjh and Lmh</text>
+  </view>
+</view>
