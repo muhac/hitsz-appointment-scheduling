@@ -1,6 +1,5 @@
 <!--pages/book/book.wxml-->
 
-
 <view class="page-body">
   <form bindsubmit="formSubmit" bindreset="formReset">
     <view class="page-section">
@@ -70,7 +69,6 @@
       </view>
     </view>
 
-
     <view class="page-section">
       <view class="weui-cells__title">预约日期</view>
       <view class="weui-cells weui-cells_after-title">
@@ -105,14 +103,13 @@
       <view class="weui-cells weui-cells_after-title">
         <view class="weui-cell weui-cell_input">
           <textarea name="detail" class="weui-textarea" placeholder="" />
-          </view>
+        </view>
+      </view>
     </view>
-  </view>
 
+    <view class="btn-area">
+      <button style="margin: 30rpx 0; width: calc(100vw - 100rpx)" type="primary" formType="submit">提交预约</button>
+    </view>
 
-  <view class="btn-area">
-        <button style="margin: 30rpx 0" type="primary" formType="submit">Submit</button>
-  </view>
-
-    </form>
+  </form>
 </view>

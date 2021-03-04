@@ -19,6 +19,7 @@
 .usermotto {
   position: absolute;
   bottom: 10rpx;
+  text-align: center;
 }
 
 

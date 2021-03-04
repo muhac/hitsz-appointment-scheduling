@@ -30,5 +30,6 @@ page{
 }
 
 .btn-area{
-  margin: 50rpx;
+  width: 100vw;
+  padding: 50rpx;
 }

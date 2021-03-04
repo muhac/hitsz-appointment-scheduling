@@ -15,6 +15,8 @@
 </view>
 
   <view class="usermotto">
-    <text class="user-motto">Designed By Yjh and Lmh</text>
+    <view>© 2021 Yjh and Lmh</view>
+    <br/>
+    <view>请不要试 bug 哈哈哈</view>
   </view>
 </view>
