@@ -1,14 +1,13 @@
 <!--pages/book/book.wxml-->
 
 
-
-
 <view class="page-body">
+  <form bindsubmit="formSubmit" bindreset="formReset">
   <view class="page-section">
     <view class="weui-cells__title">姓名</view>
     <view class="weui-cells weui-cells_after-title">
       <view class="weui-cell weui-cell_input">
-        <input class="weui-input" placeholder=""/>
+        <input name="name" class="weui-input" placeholder=""/>
       </view>
     </view>
   </view>
@@ -16,10 +15,10 @@
   <view class="page-section">
     <view class="weui-cells__title">性别</view>
     <view class="weui-cells weui-cells_after-title">
-      <radio-group bindchange="checkboxChange">
+      <radio-group name="sex" bindchange="checkboxChange">
           <label class="weui-cell weui-check__label" wx:for="{{sexItem}}" wx:key="{{item.value}}">
             <view class="weui-cell__hd">
-              <radio value="{{item.value}}" checked="{{item.checked}}"/>
+              <radio value="{{item.value}}"/>
             </view>
             <view class="weui-cell__bd">{{item.name}}</view>
           </label>
@@ -32,7 +31,7 @@
     <view class="weui-cells__tips">格式：（本/硕/博）+（年级），如本19级</view>
     <view class="weui-cells weui-cells_after-title">
       <view class="weui-cell weui-cell_input">
-        <input class="weui-input" placeholder=""/>
+        <input name="grade" class="weui-input" placeholder=""/>
       </view>
     </view>
   </view>
@@ -42,7 +41,7 @@
     <view class="weui-cells__title">学号</view>
     <view class="weui-cells weui-cells_after-title">
       <view class="weui-cell weui-cell_input">
-        <input class="weui-input" placeholder=""/>
+        <input name="studentid" class="weui-input" placeholder=""/>
       </view>
     </view>
   </view>
@@ -51,7 +50,7 @@
     <view class="weui-cells__title">手机号码</view>
     <view class="weui-cells weui-cells_after-title">
       <view class="weui-cell weui-cell_input">
-        <input class="weui-input" placeholder=""/>
+        <input name="tel" class="weui-input" type="number"  maxlength="11" placeholder=""/>
       </view>
     </view>
   </view>
@@ -60,12 +59,12 @@
     <view class="weui-cells__title">辅导员</view>
     <view class="weui-cells__tips">辅导员将负责对你进行心理辅导</view>
     <view class="weui-cells weui-cells_after-title">
-      <radio-group bindchange="checkboxChange">
-          <label class="weui-cell weui-check__label" wx:for="{{teacherItem}}" wx:key="{{item.value}}">
+      <radio-group name="teacher" bindchange="checkboxChange">
+          <label class="weui-cell weui-check__label" wx:for="{{list.teachers}}" wx:key="{{index}}">
             <view class="weui-cell__hd">
-              <radio value="{{item.value}}" checked="{{item.checked}}"/>
+              <radio value="{{list.teachers[index]}}" />
             </view>
-            <view class="weui-cell__bd">{{item.name}}</view>
+            <view class="weui-cell__bd">{{list.teachers[index]}}</view>
           </label>
         </radio-group>
     </view>
@@ -75,7 +74,7 @@
   <view class="page-section">
     <view class="weui-cells__title">预约日期</view>
     <view class="weui-cells weui-cells_after-title">
-      <radio-group bindchange="dateChange">
+      <radio-group name="date" bindchange="dateChange">
           <label class="weui-cell weui-check__label" wx:for="{{list.date}}" wx:key="{{index}}">
             <view class="weui-cell__hd">
               <radio value="{{list.date[index]}}"/>
@@ -89,10 +88,10 @@
   <view class="page-section">
     <view class="weui-cells__title">预约时间</view>
     <view class="weui-cells weui-cells_after-title">
-      <radio-group bindchange="checkboxChange">
+      <radio-group name="time" bindchange="checkboxChange">
           <label class="weui-cell weui-check__label" wx:for="{{list.hour}}" wx:key="{{index}}" wx:if="{{hoursItem[list.hour[index]]>0}}">
             <view class="weui-cell__hd" >
-              <radio value="{{index}}"/>
+              <radio value="{{list.hour[index]}}"/>
             </view>
             <view class="weui-cell__bd"  >{{list.hour[index]}}（可预约人数：{{hoursItem[list.hour[index]]}}）</view>
           </label>
@@ -104,12 +103,17 @@
     <view class="weui-cells__title">请简述目前遇到的困难和需要的帮助</view>
     <view class="weui-cells weui-cells_after-title">
       <view class="weui-cell weui-cell_input">
-        <textarea class="weui-textarea" placeholder=""/>
+        <textarea name="difficulties" class="weui-textarea" placeholder=""/>
       </view>
     </view>
   </view>
 
 
-  <view class="button" hover-class="buttonHover" hover-stay-time="40">提交预约</view>
+  <view class="btn-area">
+        <button style="margin: 30rpx 0" type="primary" formType="submit">Submit</button>
 </view>
+
+    </form>
+</view>
+
 
