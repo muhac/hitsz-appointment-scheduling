@@ -8,9 +8,14 @@ Page({
 
 
 
-    sexItem:[
-    {value:"m",name:"男"},
-    {value:"f",name:"女"}
+    sexItem: [{
+        value: "m",
+        name: "男"
+      },
+      {
+        value: "f",
+        name: "女"
+      }
     ],
 
   },
@@ -20,20 +25,20 @@ Page({
    */
   onLoad: function (options) {
     var that = this
-      wx.request({
-        url: 'https://www.bugstop.site/available/',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        success (res) {
-          //将获取到的json数据，存在名字叫list的这个数组中
-          that.setData({
-            list: res.data,
-            //res代表success函数的事件对，data是固定的，list是数组
-          })
+    wx.request({
+      url: 'https://www.bugstop.site/available/',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      success(res) {
+        //将获取到的json数据，存在名字叫list的这个数组中
+        that.setData({
+          list: res.data,
+          //res代表success函数的事件对，data是固定的，list是数组
+        })
 
-        }
-    })
+      }
+    })
   },
 
   /**
@@ -84,16 +89,14 @@ Page({
   onShareAppMessage: function () {
 
   },
-  
-  dateChange: function(e){
+
+  dateChange: function (e) {
     console.log(this)
     console.log(e.detail.value)
     console.log(this.__data__.list.schedule[e.detail.value])
-    this.setData(
-      {
-        hoursItem:this.__data__.list.schedule[e.detail.value],
-      }
-    )
+    this.setData({
+      hoursItem: this.__data__.list.schedule[e.detail.value],
+    })
     console.log(e)
   },
 
@@ -103,16 +106,16 @@ Page({
       url: 'https://www.bugstop.site/reserve/',
       data: e.detail.value,
       headers: {
-           'Content-Type': 'application/json'
+        'Content-Type': 'application/json'
       },
       timeout: "10000",
       method: "POST",
-      success (res) {
+      success(res) {
         console.log(res.data)
-    }
-  
-  })
-},
+      }
+
+    })
+  },
 
   formReset: function () {
     console.log('form发生了reset事件')

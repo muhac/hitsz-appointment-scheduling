@@ -15,12 +15,12 @@ Page({
       url: '../logs/logs'
     })
   },
-  gotoadmin(){
+  gotoadmin() {
     wx.navigateTo({
       url: '../admin_verify/admin_verify'
     })
   },
-  gotobook(){
+  gotobook() {
     wx.navigateTo({
       url: '../book/book'
     })
