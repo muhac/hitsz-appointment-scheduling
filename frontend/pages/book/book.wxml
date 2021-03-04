@@ -8,7 +8,7 @@
     <view class="weui-cells__title">姓名</view>
     <view class="weui-cells weui-cells_after-title">
       <view class="weui-cell weui-cell_input">
-        <input class="weui-input" auto-focus placeholder=""/>
+        <input class="weui-input" placeholder=""/>
       </view>
     </view>
   </view>
@@ -32,7 +32,7 @@
     <view class="weui-cells__tips">格式：（本/硕/博）+（年级），如本19级</view>
     <view class="weui-cells weui-cells_after-title">
       <view class="weui-cell weui-cell_input">
-        <input class="weui-input" auto-focus placeholder=""/>
+        <input class="weui-input" placeholder=""/>
       </view>
     </view>
   </view>
@@ -42,7 +42,7 @@
     <view class="weui-cells__title">学号</view>
     <view class="weui-cells weui-cells_after-title">
       <view class="weui-cell weui-cell_input">
-        <input class="weui-input" auto-focus placeholder=""/>
+        <input class="weui-input" placeholder=""/>
       </view>
     </view>
   </view>
@@ -51,7 +51,7 @@
     <view class="weui-cells__title">手机号码</view>
     <view class="weui-cells weui-cells_after-title">
       <view class="weui-cell weui-cell_input">
-        <input class="weui-input" auto-focus placeholder=""/>
+        <input class="weui-input" placeholder=""/>
       </view>
     </view>
   </view>
@@ -104,7 +104,7 @@
     <view class="weui-cells__title">请简述目前遇到的困难和需要的帮助</view>
     <view class="weui-cells weui-cells_after-title">
       <view class="weui-cell weui-cell_input">
-        <textarea class="weui-textarea" auto-focus placeholder=""/>
+        <textarea class="weui-textarea" placeholder=""/>
       </view>
     </view>
   </view>
