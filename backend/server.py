@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from flask import *
 from flask_cors import CORS
 
-with open('settings.json') as f_obj:
+with open('data/settings.json') as f_obj:
     settings = json.load(f_obj)
 
 
@@ -51,7 +51,7 @@ def reserve():
 @app.route("/list/", methods=['GET'])
 def in_progress():
     def get_data():
-        with open('in_progress.json') as f:
+        with open('data/in_progress.json') as f:
             appointments = json.load(f)
         return appointments
 
@@ -73,7 +73,7 @@ def in_progress():
 @app.route("/available/", methods=['GET'])
 def available():
     def get_data(max_days=10):
-        with open('available.json') as f:
+        with open('data/available.json') as f:
             schedule = json.load(f)
 
         dates = [date_lang(key, ('zh', 'en')) for key in list(schedule.keys())]
@@ -94,7 +94,7 @@ def available():
                         schedule_new[d][h] = schedule[d][h]
                     else:
                         schedule_new[d][h] = settings['max_capacity']
-            with open('available.json', 'w') as f:
+            with open('data/available.json', 'w') as f:
                 json.dump(schedule_new, f)
             schedule = schedule_new
 
