@@ -7,6 +7,9 @@ from flask import *
 from flask_cors import CORS
 
 
+with open('settings.json') as f:
+    settings = json.load(f)
+
 app = Flask(__name__, )
 CORS(app, resources=r'/*')
 
@@ -58,20 +61,20 @@ def in_progress():
 
 @app.route("/available/", methods=['GET'])
 def available():
-    def get_data(max_days=15):
+    def get_data(max_days=10):
         with open('available.json') as f:
             schedule = json.load(f)
 
-        dates = sorted(list(schedule.keys()), key=lambda z: datetime.strptime(z, '%Y 年 %m 月 %d 日'))
-        if not dates or datetime.strptime(dates[0], '%Y 年 %m 月 %d 日') < datetime.now() or \
-                datetime.strptime(dates[-1], '%Y 年 %m 月 %d 日') < datetime.now() < datetime.now() + timedelta(days=max_days):
+        dates = sorted(list(schedule.keys()), key=lambda z: datetime.strptime(z, settings['time_format']))
+        if not dates or datetime.strptime(dates[0], settings['time_format']) < datetime.now() or \
+                datetime.strptime(dates[-1], settings['time_format']) < datetime.now() + timedelta(days=max_days):
             print('update schedule')
             schedule_new = {}
             for day in range(max_days):
-                d = (datetime.now() + timedelta(days=day)).strftime("%Y 年 %m 月 %d 日")
+                d = (datetime.now() + timedelta(days=day)).strftime(settings['time_format'])
                 schedule_new[d] = {}
-                for hour in [9, 10, 14, 15, 16]:
-                    h = '{0:02d}:00-{0:02d}:50'.format(hour)
+                for hour in settings['work_start']:
+                    h = settings['work_hours'].format(hour)
                     if d in dates and h in list(schedule[d].keys()):
                         schedule_new[d][h] = schedule[d][h]
                     else:
@@ -80,7 +83,7 @@ def available():
                 json.dump(schedule_new, f)
             schedule = schedule_new
 
-        date = sorted(list(schedule.keys()), key=lambda z: datetime.strptime(z, '%Y 年 %m 月 %d 日'))
+        date = sorted(list(schedule.keys()), key=lambda z: datetime.strptime(z, settings['time_format']))
         hour = sorted(list(schedule[list(schedule.keys())[0]].keys()), key=lambda z: int(z[:2]))
 
         return schedule, date, hour
@@ -91,6 +94,7 @@ def available():
         messages['date'] = data[1]
         messages['hour'] = data[2]
         messages['schedule'] = data[0]
+        messages['teachers'] = settings['teachers']
     except Exception as e:
         print(e)
         messages['statusCode'] = 500
