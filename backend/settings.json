@@ -1,1 +1,1 @@
-{"teachers": ["\u5e94\u68a6\u5a34", "\u7530\u8587", "\u6881\u7fa1\u98de", "\u674e\u5a1c"], "time_format": "%Y \u5e74 %m \u6708 %d \u65e5  \uff08%A\uff09", "work_start": [9, 10, 14, 15, 16], "work_hours": "{0:02d}:00 ~ {0:02d}:50"}
+{"teachers": ["\u5e94\u68a6\u5a34", "\u7530\u8587", "\u6881\u7fa1\u98de", "\u674e\u5a1c"], "time_format": "%Y \u5e74 %m \u6708 %d \u65e5  \uff08%A\uff09", "work_start": [9, 10, 14, 15, 16], "work_hours": "{0:02d}:00 ~ {0:02d}:50", "max_capacity": 1}

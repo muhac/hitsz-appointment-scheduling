@@ -93,7 +93,7 @@ def available():
                     if d in dates and h in list(schedule[d].keys()):
                         schedule_new[d][h] = schedule[d][h]
                     else:
-                        schedule_new[d][h] = 1
+                        schedule_new[d][h] = settings['max_capacity']
             with open('available.json', 'w') as f:
                 json.dump(schedule_new, f)
             schedule = schedule_new
