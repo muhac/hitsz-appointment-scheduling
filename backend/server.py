@@ -62,13 +62,13 @@ def available():
         with open('available.json') as f:
             schedule = json.load(f)
 
-        dates = sorted(list(schedule.keys()), key=lambda z: datetime.strptime(z, '%Y%m%d'))
-        if not dates or datetime.strptime(dates[0], '%Y%m%d') < datetime.now() or \
-                datetime.strptime(dates[-1], '%Y%m%d') < datetime.now() < datetime.now() + timedelta(days=max_days):
+        dates = sorted(list(schedule.keys()), key=lambda z: datetime.strptime(z, '%Y 年 %m 月 %d 日'))
+        if not dates or datetime.strptime(dates[0], '%Y 年 %m 月 %d 日') < datetime.now() or \
+                datetime.strptime(dates[-1], '%Y 年 %m 月 %d 日') < datetime.now() < datetime.now() + timedelta(days=max_days):
             print('update schedule')
             schedule_new = {}
             for day in range(max_days):
-                d = (datetime.now() + timedelta(days=day)).strftime("%Y%m%d")
+                d = (datetime.now() + timedelta(days=day)).strftime("%Y 年 %m 月 %d 日")
                 schedule_new[d] = {}
                 for hour in [9, 10, 14, 15, 16]:
                     h = '{0:02d}:00-{0:02d}:50'.format(hour)
@@ -80,7 +80,7 @@ def available():
                 json.dump(schedule_new, f)
             schedule = schedule_new
 
-        date = sorted(list(schedule.keys()), key=lambda z: datetime.strptime(z, '%Y%m%d'))
+        date = sorted(list(schedule.keys()), key=lambda z: datetime.strptime(z, '%Y 年 %m 月 %d 日'))
         hour = sorted(list(schedule[list(schedule.keys())[0]].keys()), key=lambda z: int(z[:2]))
 
         return schedule, date, hour
