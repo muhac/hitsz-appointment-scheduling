@@ -9,12 +9,12 @@
   </view>
 
 <view class="options">
-  <view class="button" hover-class="buttonHover" hover-stay-time="40" bindtap="gotobook">预约咨询</view>
+  <view class="button" hover-class="buttonHover" hover-stay-time="40" bindtap="gotoBook">预约咨询</view>
   <view class="button" hover-class="buttonHover" hover-stay-time="40">我的预约</view>
-  <view class="button" hover-class="buttonHover" hover-stay-time="40" bindtap="gotoadmin">管理中心</view>
+  <view class="button" hover-class="buttonHover" hover-stay-time="40" bindtap="gotoAdmin">管理中心</view>
 </view>
 
   <view class="usermotto">
-    <text class="user-motto">Design By lmh</text>
+    <text class="user-motto">Designed By Yjh and Lmh</text>
   </view>
 </view>

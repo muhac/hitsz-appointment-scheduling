@@ -38,8 +38,8 @@ def test_page():
 @app.route("/reserve/", methods=['POST'])
 def reserve():
     result_text = {"statusCode": 200}
-    print(request.form)
-    name = request.form.get('name')
+    print(request.json)
+    name = request.json.get('name')
     ...
     response = make_response(jsonify(result_text))
     response.headers['Access-Control-Allow-Origin'] = '*'
