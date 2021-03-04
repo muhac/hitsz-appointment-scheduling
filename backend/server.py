@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from flask import *
 from flask_cors import CORS
 
-with open('settings.json') as f_obj:
+with open('data/settings.json') as f_obj:
     settings = json.load(f_obj)
 
 
@@ -37,11 +37,53 @@ def test_page():
 
 @app.route("/reserve/", methods=['POST'])
 def reserve():
-    result_text = {"statusCode": 200}
-    print(request.json)
-    name = request.json.get('name')
-    ...
-    response = make_response(jsonify(result_text))
+    def check_data(data):
+        with open('data/available.json') as f:
+            schedule = json.load(f)
+
+        if not all([
+            data.get('name'),
+            data.get('name'),
+            data.get('id'),
+            data.get('mobile'),
+            data.get('grade'),
+            data.get('teacher'),
+            data.get('date'),
+            data.get('hour'),
+            data.get('detail'),
+        ]) or schedule[data['date']][data['hour']] < 1:
+            print('check failed')
+            raise RuntimeError
+
+        schedule[data['date']][data['hour']] -= 1
+        with open('data/available.json', 'w') as f:
+            json.dump(schedule, f)
+
+    def write_data(data):
+        with open('data/in_progress.json') as f:
+            appointments = json.load(f)
+
+        appointments.append(data)
+        appointments.sort(key=lambda z: datetime.strptime(
+            date_lang(z['date'] + z['hour'], ('zh', 'en')),
+            settings['sort_helper']))
+
+        with open('data/in_progress.json', 'w') as f:
+            json.dump(appointments, f)
+
+    post = request.json
+    print(post)
+    messages = {"statusCode": 200}
+
+    try:
+        check_data(post)
+        print('write data')
+        write_data(post)
+    except Exception as e:
+        print(e)
+        messages['statusCode'] = 500
+
+    response = make_response(jsonify(messages))
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Methods'] = 'OPTIONS,HEAD,GET,POST'
     response.headers['Access-Control-Allow-Headers'] = 'x-requested-with'
@@ -51,7 +93,7 @@ def reserve():
 @app.route("/list/", methods=['GET'])
 def in_progress():
     def get_data():
-        with open('in_progress.json') as f:
+        with open('data/in_progress.json') as f:
             appointments = json.load(f)
         return appointments
 
@@ -73,7 +115,7 @@ def in_progress():
 @app.route("/available/", methods=['GET'])
 def available():
     def get_data(max_days=10):
-        with open('available.json') as f:
+        with open('data/available.json') as f:
             schedule = json.load(f)
 
         dates = [date_lang(key, ('zh', 'en')) for key in list(schedule.keys())]
@@ -90,11 +132,13 @@ def available():
                 schedule_new[d] = {}
                 for hour in settings['work_start']:
                     h = settings['work_hours'].format(hour)
+
                     if d in dates and h in list(schedule[d].keys()):
                         schedule_new[d][h] = schedule[d][h]
                     else:
-                        schedule_new[d][h] = 1
-            with open('available.json', 'w') as f:
+                        schedule_new[d][h] = settings['max_capacity']
+
+            with open('data/available.json', 'w') as f:
                 json.dump(schedule_new, f)
             schedule = schedule_new
 
@@ -105,6 +149,7 @@ def available():
         return schedule, date, hour
 
     messages = {"statusCode": 200}
+
     try:
         data = get_data()
         messages['date'] = data[1]
