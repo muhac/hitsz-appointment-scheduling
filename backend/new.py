@@ -1,11 +1,14 @@
+import os
 import json
 
-null = {}
-with open('available.json', 'w') as f:
-    json.dump(null, f)
+if not os.path.isdir('data'):
+    os.mkdir('data')
 
-with open('in_progress.json', 'w') as f:
-    json.dump(null, f)
+with open('data/available.json', 'w') as f:
+    json.dump({}, f)
+
+with open('data/in_progress.json', 'w') as f:
+    json.dump({}, f)
 
 info = {
     'teachers': ['应梦娴', '田薇', '梁羡飞', '李娜'],
@@ -15,5 +18,5 @@ info = {
     'max_capacity': 1
 }
 
-with open('settings.json', 'w') as f:
+with open('data/settings.json', 'w') as f:
     json.dump(info, f)
