@@ -28,3 +28,7 @@ page{
   color: white;
   border-radius: 20rpx;
 }
+
+.btn-area{
+  margin: 50rpx;
+}

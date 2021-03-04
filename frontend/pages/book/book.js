@@ -9,29 +9,10 @@ Page({
 
 
     sexItem:[
-    {value:"man",name:"男"},
-    {value:"woman",name:"女"}
+    {value:"m",name:"男"},
+    {value:"f",name:"女"}
     ],
-    teacherItem:[
-      {value:"ymx",name:"应梦娴"},
-      {value:"lxf",name:"梁羡飞"},
-      {value:"ln",name:"李娜"},
-      {value:"tw",name:"田薇"}
-    ],
-    dateItem:[
-      {value:"date1",name:"2021年3月8日 周一",numbers:"5",disabled:false},
-      {value:"date2",name:"2021年3月9日 周二",numbers:"5",disabled:false},
-      {value:"date3",name:"2021年3月10日 周三",numbers:"5",disabled:false},
-      {value:"date4",name:"2021年3月11日 周四",numbers:"5",disabled:false},
-      {value:"date5",name:"2021年3月12日 周五",numbers:"5",disabled:false}
-    ],
-    timeItem:[
-      {value:"time1",name:"09:00-09:50",numbers:"1",disabled:false},
-      {value:"time2",name:"10:00-10:50",numbers:"0",disabled:true},
-      {value:"time3",name:"14:00-14:50",numbers:"0",disabled:true},
-      {value:"time4",name:"15:00-15:50",numbers:"1",disabled:false},
-      {value:"time5",name:"16:00-16:50",numbers:"1",disabled:false}
-    ]
+
   },
 
   /**
@@ -114,6 +95,26 @@ Page({
       }
     )
     console.log(e)
-  }
+  },
 
+  formSubmit(e) {
+    console.log('form发生了submit事件，携带数据为：', e.detail.value)
+    wx.request({
+      url: 'https://www.bugstop.site/reserve/',
+      data: e.detail.value,
+      headers: {
+           'Content-Type': 'application/json'
+      },
+      timeout: "10000",
+      method: "POST",
+      success (res) {
+        console.log(res.data)
+    }
+  
+  })
+},
+
+  formReset: function () {
+    console.log('form发生了reset事件')
+  }
 })
