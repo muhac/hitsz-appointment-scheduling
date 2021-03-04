@@ -9,8 +9,10 @@
   "window":{
     "backgroundTextStyle":"light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "Weixin",
-    "navigationBarTextStyle":"black"
+    "navigationBarTitleText": "心理咨询预约",
+    "navigationBarTextStyle":"black",
+    "enablePullDownRefresh": false,
+    "disableScroll": true
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json"
