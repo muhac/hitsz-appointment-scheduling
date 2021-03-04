@@ -1,0 +1,3 @@
+<!--pages/admin_verify/admin_verify.wxml-->
+
+<input class="password-input" password type="text" placeholder="请输入管理密码" confirm-type="done" />
