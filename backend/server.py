@@ -15,6 +15,9 @@ with open('data/secrets.json') as f_obj:
 with open('data/settings.json') as f_obj:
     settings = json.load(f_obj)
 
+with open('data/schedules.json') as f_obj:
+    schedule = json.load(f_obj)
+
 
 def date_lang(date: str, lang: (str, str) = ('en', 'zh')) -> str:
     languages = settings['languages']
@@ -66,10 +69,10 @@ def admin_verification():
 @app.route("/reserve/", methods=['POST'])
 def reserve():
     def check_data(data):
+        global schedule
+
         with open('data/dynamic.json') as f:
             dynamic = json.load(f)
-        with open('data/available.json') as f:
-            schedule = json.load(f)
 
         if not all([data.get(item) for item in settings['questionnaire']]) \
                 or schedule[data['date']][data['hour']] < 1 or data['wx'] in dynamic['blocked']:
@@ -77,11 +80,11 @@ def reserve():
             raise RuntimeError
 
         schedule[data['date']][data['hour']] -= 1
-        with open('data/available.json', 'w') as f:
+        with open('data/schedules.json', 'w') as f:
             json.dump(schedule, f)
 
     def write_data(data):
-        with open('data/in_progress.json') as f:
+        with open('data/tickets.json') as f:
             appointments = json.load(f)
 
         tickets = sorted(list(appointments.keys()), key=lambda z: int(z.split('@')[0]))
@@ -91,7 +94,7 @@ def reserve():
         data['timestamp'] = datetime.now().strftime(settings['timestamp'])
         appointments[new_ticket] = data
 
-        with open('data/in_progress.json', 'w') as f:
+        with open('data/tickets.json', 'w') as f:
             json.dump(appointments, f)
 
     post = request.json
@@ -109,9 +112,9 @@ def reserve():
 
 
 @app.route("/list/", methods=['POST'])
-def in_progress():
+def show_reservations():
     def get_data(user_filter: str = None):
-        with open('data/in_progress.json') as f:
+        with open('data/tickets.json') as f:
             appointments = json.load(f)
 
         time_format = date_convert(settings['sort_helper'], ('zh', 'en'))
@@ -142,12 +145,10 @@ def in_progress():
 @app.route("/available/", methods=['GET'])
 def available():
     def get_data(max_days=10):
-        with open('data/available.json') as f:
-            schedule = json.load(f)
+        global schedule
 
-        time_format = date_convert(settings['time_format'])
-        dates = [date_lang(key, ('zh', 'en')) for key in list(schedule.keys())]
-        dates.sort(key=lambda z: time_format(z))
+        time_format = date_convert(settings['time_format'], ('zh', 'en'))
+        dates = sorted(list(schedule.keys()), key=lambda z: time_format(z))
 
         if not dates or len(dates) != max_days or \
                 time_format(dates[0]) < datetime.now() - timedelta(days=1) or \
@@ -166,26 +167,27 @@ def available():
                     else:
                         schedule_new[d][h] = settings['max_capacity']
 
-            with open('data/available.json', 'w') as f:
+            with open('data/schedules.json', 'w') as f:
                 json.dump(schedule_new, f)
             schedule = schedule_new
 
         time_format = date_convert(settings['time_format'], ('zh', 'en'))
-        date = sorted(list(schedule.keys()), key=lambda z: time_format(z))
-        hour = sorted(list(schedule[date[0]].keys()), key=lambda z: int(z[:2]))
+        date_show = sorted(list(schedule.keys()), key=lambda z: time_format(z))
+        hour_show = sorted(list(schedule[date_show[0]].keys()), key=lambda z: int(z[:2]))
 
         with open('data/dynamic.json') as f:
             dynamic = json.load(f)
 
-        date = [d for d in date if not any(off_day in d for off_day in dynamic['off_days'])
-                and any(work_day in d for work_day in settings['work_days'] + dynamic['work_days'])]
-        schedule = {d: schedule[d] for d in date}
+        date_show = [date for date in date_show if not any(off_day in date for off_day in dynamic['off_days'])
+                     and any(work_day in date for work_day in settings['work_days'] + dynamic['work_days'])]
+        schedule_show = {date: schedule[date] for date in date_show}
 
         time_format = date_convert(settings['sort_helper'], ('zh', 'en'))
-        schedule[date[0]] = {h: 0 if datetime.now() + timedelta(hours=settings['hour_before']) >
-                                     time_format(date[0] + h) else schedule[date[0]][h] for h in hour}
+        ddl = datetime.now() + timedelta(hours=settings['hour_before'])
+        schedule_show[date_show[0]] = {hour: 0 if ddl > time_format(date_show[0] + hour) else
+                                             schedule_show[date_show[0]][hour] for hour in hour_show}
 
-        return schedule, date, hour
+        return schedule_show, date_show, hour_show
 
     messages = {"statusCode": 200}
 
