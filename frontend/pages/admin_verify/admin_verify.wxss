@@ -1,32 +1,35 @@
-
-.Toptitle{
+.Toptitle {
   text-align: center;
   margin: 60rpx auto 60rpx;
   font-size: 26rpx;
 }
-.content{
+
+.content {
   width: 600rpx;
-  padding:0 75rpx;
+  padding: 0 75rpx;
   display: flex;
   justify-content: space-around;
   align-items: center;
   margin-top: 100rpx;
 }
-.iptbox{
+
+.iptbox {
   width: 90rpx;
   height: 90rpx;
-  border:1rpx solid #ddd;
+  border: 1rpx solid #ddd;
   box-sizing: border-box;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
 }
-.ipt{
+
+.ipt {
   width: 0;
   height: 0;
 }
-.btn-area{
+
+.btn-area {
   width: 80%;
   margin-top: 60rpx;
 }
