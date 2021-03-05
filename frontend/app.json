@@ -11,8 +11,7 @@
     "navigationBarBackgroundColor": "#fff",
     "navigationBarTitleText": "心理咨询预约",
     "navigationBarTextStyle":"black",
-    "enablePullDownRefresh": false,
-    "disableScroll": false
+    "enablePullDownRefresh": false
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json",

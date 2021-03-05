@@ -1,11 +1,32 @@
-/* pages/admin_verify/admin_verify.wxss */
 
-.password-input{
-  margin-top: 50%;
-  margin: 50rpx;
-  padding: 20rpx 50rpx;
-  border-style: solid;
-  border-width: 1rpx;
-  border-color: #aaa;
-  border-radius: 20rpx;
+.Toptitle{
+  text-align: center;
+  margin: 60rpx auto 60rpx;
+  font-size: 26rpx;
+}
+.content{
+  width: 600rpx;
+  padding:0 75rpx;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 100rpx;
+}
+.iptbox{
+  width: 90rpx;
+  height: 90rpx;
+  border:1rpx solid #ddd;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.ipt{
+  width: 0;
+  height: 0;
+}
+.btn-area{
+  width: 80%;
+  margin-top: 60rpx;
 }
