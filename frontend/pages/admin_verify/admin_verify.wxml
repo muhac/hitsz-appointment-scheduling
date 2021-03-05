@@ -1,3 +1,14 @@
-<!--pages/admin_verify/admin_verify.wxml-->
-
-<input class="password-input" password type="text" placeholder="请输入管理密码" confirm-type="done" />
+<view class="Toptitle">请输入管理员密码</view>
+<form bindsubmit="formSubmit">
+  <view class='content'>
+    <block wx:for="{{Length}}" wx:key="item">
+      <input class='iptbox' value="{{Value.length>=index+1?Value[index]:''}}" disabled password='{{ispassword}}'
+        catchtap='Tap'></input>
+    </block>
+  </view>
+  <input name="password" password="{{true}}" class='ipt' maxlength="{{Length}}" focus="{{isFocus}}"
+    bindinput="Focus"></input>
+  <view>
+    <button class="btn-area" type='primary' disabled='{{disabled}}' formType="primary">下一步</button>
+  </view>
+</form>
