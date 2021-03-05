@@ -1,0 +1,20 @@
+/* pages/book/book.wxss */
+
+page{
+  background-color: #F8F8F8;
+}
+
+.page-section{
+  margin-bottom: 20rpx;
+}
+
+.page-body{
+  margin-bottom: 1rpx;
+}
+
+.btn-area{
+  padding: 8px;
+  display: flex;
+  justify-content: center;
+  align-items:flex-end; 
+}

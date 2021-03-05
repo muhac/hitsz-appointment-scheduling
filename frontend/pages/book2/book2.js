@@ -7,11 +7,14 @@ Page({
 
         dateIndex: -1,
         hourIndex: -1,
-        hourIndex: -1,
+        hourItem: {},
         teacherIndex: -1,
         list: {
 
         },
+        date_available: [],
+        hour_available: [],
+
         length: 0,
         formData: {},
         rules: [{
@@ -29,14 +32,14 @@ Page({
                 },
             },
             {
-                name: 'studentid',
+                name: 'id',
                 rules: {
                     required: true,
                     message: '学号为必填项'
                 },
             },
             {
-                name: 'tel',
+                name: 'mobile',
                 rules: [{
                     required: true,
                     message: '手机号码为必填项'
@@ -67,10 +70,10 @@ Page({
                 }],
             },
             {
-                name: 'difficulties',
+                name: 'detail',
                 rules: [{
                     required: true,
-                    minlength: 10,
+                    minlength: 0,
                     maxlength: 200,
                     message: '困惑与希望得到的帮助请多于10字且少于140字'
                 }],
@@ -81,6 +84,47 @@ Page({
 
     onLoad: function (options) {
         var that = this
+        wx.getStorage({
+            key: 'name',
+            success(res) {
+                that.setData({
+                    [`formData.name`]: res.data
+                })
+            }
+        })
+        wx.getStorage({
+            key: 'sex',
+            success(res) {
+                that.setData({
+                    [`formData.sex`]: res.data
+                })
+            }
+        })
+        wx.getStorage({
+            key: 'sexIndex',
+            success(res) {
+                that.setData({
+                    sexIndex: res.data
+                })
+            }
+        })
+
+        wx.getStorage({
+            key: 'id',
+            success(res) {
+                that.setData({
+                    [`formData.id`]: res.data
+                })
+            }
+        })
+        wx.getStorage({
+            key: 'mobile',
+            success(res) {
+                that.setData({
+                    [`formData.mobile`]: res.data
+                })
+            }
+        })
         wx.request({
             url: 'https://www.bugstop.site/available/',
             headers: {
@@ -92,18 +136,39 @@ Page({
                 that.setData({
                     list: res.data,
                     //res代表success函数的事件对，data是固定的，list是数组
-                })
+                });
+                let data = that.data.list.schedule;
+                var date_temp = [];
+                for (var index in data) {
+                    var temp = 0;
+                    for (var index2 in data[index]) {
+                        temp = temp + data[index][index2];
+                    }
+                    if (temp > 0) {
+                        date_temp.push(index);
+                    }
+                    that.setData({
+                        date_available: date_temp
+                        //res代表success函数的事件对，data是固定的，list是数组
+                    });
+                }
 
+            },
+            fail() {
+                wx.showToast({
+                    title: "连接超时，请稍候重试",
+                    icon: 'error', //如果要纯文本，不要icon，将值设为'none'
+                    mask: true
+                })
             }
         })
 
     },
 
     textareaInput: function (e) {
-        console.log(e)
         this.setData({
             length: e.detail.value.length,
-            [`formData.difficulties`]: e.detail.value
+            [`formData.detail`]: e.detail.value
 
         })
     },
@@ -118,32 +183,56 @@ Page({
 
     bindDateChange: function (e) {
         var list = this.data.list;
+        var date_available = this.data.date_available;
+        var date_select = date_available[e.detail.value];
+
+        var hour_temp = [];
+        for (var index in list.schedule[date_select]) {
+            if (list.schedule[date_select][index] > 0) {
+                hour_temp.push(index)
+            }
+        }
         this.setData({
             dateIndex: e.detail.value,
-            [`formData.date`]: list.date[e.detail.value]
-        })
+            [`formData.date`]: date_select,
+            hour_available: hour_temp
+        });
+
+
     },
 
     formInputChange(e) {
         const {
             field
         } = e.currentTarget.dataset
+        wx.setStorage({
+            key: field,
+            data: e.detail.value
+        })
         this.setData({
             [`formData.${field}`]: e.detail.value
         })
     },
 
     bindHourChange: function (e) {
-        var list = this.data.list;
+        var hour_available = this.data.hour_available;
 
         this.setData({
             hourIndex: e.detail.value,
-            [`formData.hour`]: list.hour[e.detail.value]
+            [`formData.hour`]: hour_available[e.detail.value]
 
         })
     },
     bindSexChange: function (e) {
         var sex = this.data.sex
+        wx.setStorage({
+            key: 'sexIndex',
+            data: e.detail.value
+        })
+        wx.setStorage({
+            key: 'sex',
+            data: sex[e.detail.value]
+        })
         this.setData({
             sexIndex: e.detail.value,
             [`formData.sex`]: sex[e.detail.value]
@@ -153,9 +242,9 @@ Page({
 
 
     submitForm() {
-        var formdata=this.data.formData;
+        var formdata = this.data.formData;
+        var that = this;
         this.selectComponent('#form').validate((valid, errors) => {
-            console.log('valid', valid, errors)
             if (!valid) {
                 const firstError = Object.keys(errors)
                 if (firstError.length) {
@@ -168,21 +257,20 @@ Page({
                 wx.showLoading({
                     title: "提交中",
                     mask: true
-                });
-                console.log(formdata);
+                })
+                console.log("submit:", formdata)
                 wx.request({
                     url: 'https://www.bugstop.site/reserve/',
-                    data: formData,
+                    data: formdata,
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     timeout: 10000,
                     method: "POST",
                     success(res) {
-                        console.log(res.data)
                         wx.hideLoading()
                         switch (res.data.statusCode) {
-                            case 500:
+                            case 200:
                                 wx.showToast({
                                     title: "预约成功！",
                                     icon: 'success', //如果要纯文本，不要icon，将值设为'none'
@@ -195,7 +283,15 @@ Page({
                                         url: '/pages/index/index'
                                     })
                                 }, 2000)
-
+                                break;
+                                
+                            case 500:
+                                wx.showToast({
+                                    title: "预约失败，请重试",
+                                    icon: 'error', //如果要纯文本，不要icon，将值设为'none'
+                                    mask: true,
+                                    duration: 3000
+                                })
                                 break;
 
                         }
@@ -208,12 +304,9 @@ Page({
                             mask: true
                         })
                     }
-
                 })
+
             }
         })
-        // this.selectComponent('#form').validateField('mobile', (valid, errors) => {
-        //     console.log('valid', valid, errors)
-        // })
     }
 });

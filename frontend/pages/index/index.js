@@ -22,7 +22,7 @@ Page({
   },
   gotoBook() {
     wx.navigateTo({
-      url: '../book/book'
+      url: '../book2/book2'
     })
   },
   onLoad() {
