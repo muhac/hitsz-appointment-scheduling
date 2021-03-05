@@ -4,10 +4,10 @@ import json
 if not os.path.isdir('data'):
     os.mkdir('data')
 
-with open('data/available.json', 'w') as f:
+with open('data/schedules.json', 'w') as f:
     json.dump({}, f)
 
-with open('data/in_progress.json', 'w') as f:
+with open('data/tickets.json', 'w') as f:
     json.dump({}, f)
 
 settings = {
