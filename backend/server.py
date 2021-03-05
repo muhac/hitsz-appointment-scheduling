@@ -1,3 +1,6 @@
+# Author: limuhan
+# GitHub: bugstop
+
 import json
 import requests
 from datetime import datetime, timedelta
@@ -5,15 +8,15 @@ from datetime import datetime, timedelta
 from flask import *
 from flask_cors import CORS
 
+with open('data/secrets.json') as f_obj:
+    secrets = json.load(f_obj)
+
 with open('data/settings.json') as f_obj:
     settings = json.load(f_obj)
 
 
 def date_lang(date: str, lang: (str, str) = ('en', 'zh')) -> str:
-    languages = {
-        'en': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-        'zh': ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日']
-    }
+    languages = settings['languages']
     for i in range(len(languages['en'])):
         date = date.replace(languages[lang[0]][i], languages[lang[1]][i])
     return date
@@ -40,8 +43,9 @@ def index():
 @app.route("/uid/", methods=['POST'])
 def get_uid():
     code = request.json.get('code')
-    url = 'https://api.weixin.qq.com/sns/jscode2session?appid={}&secret={}&js_code={}&grant_type=authorization_code'
-    rc = requests.get(url.format('wxdefe17992df5e3fb', '7380e978aeec60c86fd23e97e184f250', code))
+    url = 'https://api.weixin.qq.com/sns/jscode2session?' \
+          'appid={}&secret={}&js_code={}&grant_type=authorization_code'
+    rc = requests.get(url.format(secrets['AppID'], secrets['AppSecret'], code))
     print(rc.json())
     messages = {"statusCode": 200, 'wx': rc.json().get('openid')}
     return construct_response(messages)
@@ -56,12 +60,14 @@ def admin_verification():
 @app.route("/reserve/", methods=['POST'])
 def reserve():
     def check_data(data):
+        with open('data/dynamic.json') as f:
+            dynamic = json.load(f)
         with open('data/available.json') as f:
             schedule = json.load(f)
 
         if not all([data.get('wx'), data.get('name'), data.get('sex'), data.get('id'), data.get('mobile'),
                     data.get('teacher'), data.get('date'), data.get('hour'), data.get('detail')]) \
-                or schedule[data['date']][data['hour']] < 1:
+                or schedule[data['date']][data['hour']] < 1 or data['wx'] in dynamic['blocked']:
             print('check failed')
             raise RuntimeError
 
@@ -104,8 +110,9 @@ def in_progress():
         with open('data/in_progress.json') as f:
             appointments = json.load(f)
 
-        tickets = sorted(list(appointments.keys()), key=lambda z: datetime.strptime(
-            date_lang(appointments[z]['date'] + appointments[z]['hour'], ('zh', 'en')), settings['sort_helper']))
+        time_format = lambda z: datetime.strptime(date_lang(z, ('zh', 'en')), settings['sort_helper'])
+        tickets = sorted(list(appointments.keys()),
+                         key=lambda z: time_format(appointments[z]['date'] + appointments[z]['hour']))
 
         if user_filter != settings['password']:
             tickets_filtered = [ticket for ticket in tickets if appointments[ticket].get('wx') == user_filter]
@@ -164,8 +171,16 @@ def available():
             date_lang(z, ('zh', 'en')), settings['time_format']))
         hour = sorted(list(schedule[list(schedule.keys())[0]].keys()), key=lambda z: int(z[:2]))
 
-        date = [d for d in date if any(work_day in d for work_day in settings['work_days'])]
+        with open('data/dynamic.json') as f:
+            dynamic = json.load(f)
+
+        date = [d for d in date if not any(off_day in d for off_day in dynamic['off_days'])
+                and any(work_day in d for work_day in settings['work_days'] + dynamic['work_days'])]
         schedule = {d: schedule[d] for d in date}
+
+        time_format = lambda z: datetime.strptime(date_lang(z, ('zh', 'en')), settings['sort_helper'])
+        schedule[date[0]] = {h: 0 if datetime.now() + timedelta(hours=settings['hour_before']) >
+                                     time_format(date[0] + h) else schedule[date[0]][h] for h in hour}
 
         return schedule, date, hour
 
@@ -177,7 +192,6 @@ def available():
         messages['hour'] = data[2]
         messages['schedule'] = data[0]
         messages['teachers'] = settings['teachers']
-        print(messages['date'])
     except Exception as e:
         print(e)
         messages['statusCode'] = 500

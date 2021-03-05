@@ -85,7 +85,7 @@ Page({
     onLoad: function (options) {
         var that = this;
         this.setData({
-            userInfo: undefined, // app.globalData.userInfo,
+            userInfo: 'test', // app.globalData.userInfo,
         });
         wx.getStorage({
             key: "name",
