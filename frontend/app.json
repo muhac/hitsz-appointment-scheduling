@@ -1,10 +1,10 @@
 {
   "pages":[
     "pages/index/index",
-    "pages/book2/book2",
+    "pages/book/book",
     "pages/admin/admin",
-    "pages/logs/logs",
-    "pages/admin_verify/admin_verify"
+    "pages/admin_verify/admin_verify",
+    "pages/logs/logs"
   ],
   "window":{
     "backgroundTextStyle":"light",
