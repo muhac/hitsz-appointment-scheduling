@@ -5,6 +5,9 @@ from datetime import datetime, timedelta
 from flask import *
 from flask_cors import CORS
 
+with open('data/secrets.json') as f_obj:
+    secrets = json.load(f_obj)
+
 with open('data/settings.json') as f_obj:
     settings = json.load(f_obj)
 
@@ -41,7 +44,7 @@ def index():
 def get_uid():
     code = request.json.get('code')
     url = 'https://api.weixin.qq.com/sns/jscode2session?appid={}&secret={}&js_code={}&grant_type=authorization_code'
-    rc = requests.get(url.format('wxdefe17992df5e3fb', '7380e978aeec60c86fd23e97e184f250', code))
+    rc = requests.get(url.format(secrets['AppID'], secrets['AppSecret'], code))
     print(rc.json())
     messages = {"statusCode": 200, 'wx': rc.json().get('openid')}
     return construct_response(messages)
