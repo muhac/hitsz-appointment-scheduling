@@ -1,7 +1,7 @@
 <!--pages/book/book.wxml-->
 
+  <mp-form-page title="心理咨询预约" subtitle="地点：信息楼L1103">
 
-<view class="page-body">
   <form bindsubmit="formSubmit" bindreset="formReset">
   <view class="page-section">
     <view class="weui-cells__title">姓名</view>
@@ -15,7 +15,7 @@
   <view class="page-section">
     <view class="weui-cells__title">性别</view>
     <view class="weui-cells weui-cells_after-title">
-      <radio-group name="sex" bindchange="checkboxChange">
+      <radio-group name="sex">
           <label class="weui-cell weui-check__label" wx:for="{{sexItem}}" wx:key="{{item.value}}">
             <view class="weui-cell__hd">
               <radio value="{{item.value}}"/>
@@ -28,12 +28,13 @@
 
   <view class="page-section">
     <view class="weui-cells__title">年级</view>
-    <view class="weui-cells__tips">格式：（本/硕/博）+（年级），如本19级</view>
+
     <view class="weui-cells weui-cells_after-title">
       <view class="weui-cell weui-cell_input">
         <input name="grade" class="weui-input" placeholder=""/>
       </view>
     </view>
+    <view class="weui-cells__tips">格式：（本/硕/博）+（年级），如本19级</view>
   </view>
 
 
@@ -57,9 +58,8 @@
 
   <view class="page-section">
     <view class="weui-cells__title">辅导员</view>
-    <view class="weui-cells__tips">辅导员将负责对你进行心理辅导</view>
     <view class="weui-cells weui-cells_after-title">
-      <radio-group name="teacher" bindchange="checkboxChange">
+      <radio-group name="teacher">
           <label class="weui-cell weui-check__label" wx:for="{{list.teachers}}" wx:key="{{index}}">
             <view class="weui-cell__hd">
               <radio value="{{list.teachers[index]}}" />
@@ -68,6 +68,7 @@
           </label>
         </radio-group>
     </view>
+    <view class="weui-cells__tips">辅导员将负责对你进行心理辅导</view>
   </view>
 
 
@@ -85,10 +86,10 @@
     </view>
   </view>
 
-  <view class="page-section">
+  <view class="page-section" wx:if="{{showhours}}">
     <view class="weui-cells__title">预约时间</view>
     <view class="weui-cells weui-cells_after-title">
-      <radio-group name="time" bindchange="checkboxChange">
+      <radio-group name="time">
           <label class="weui-cell weui-check__label" wx:for="{{list.hour}}" wx:key="{{index}}" wx:if="{{hoursItem[list.hour[index]]>0}}">
             <view class="weui-cell__hd" >
               <radio value="{{list.hour[index]}}"/>
@@ -101,19 +102,20 @@
 
   <view class="page-section">
     <view class="weui-cells__title">请简述目前遇到的困难和需要的帮助</view>
+
     <view class="weui-cells weui-cells_after-title">
       <view class="weui-cell weui-cell_input">
         <textarea name="difficulties" class="weui-textarea" placeholder=""/>
       </view>
     </view>
+    <view class="weui-cells__tips">请输入不少于5字不多于200字的内容</view>
   </view>
 
 
-  <view class="btn-area">
-        <button style="margin: 30rpx 0" type="primary" formType="submit">Submit</button>
+  <view class="btn-area" slot="button">
+        <button class="weui-btn" type="primary" formType="submit">提交预约</button>
 </view>
 
-    </form>
-</view>
+</form>
 
-
+</mp-form-page>

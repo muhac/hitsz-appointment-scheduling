@@ -1,9 +1,11 @@
 {
   "pages":[
+    "pages/book2/book2",
     "pages/index/index",
+
     "pages/logs/logs",
-    "pages/admin_verify/admin_verify",
-    "pages/book/book"
+    "pages/admin_verify/admin_verify"
+
 
   ],
   "window":{
@@ -13,5 +15,12 @@
     "navigationBarTextStyle":"black"
   },
   "style": "v2",
-  "sitemapLocation": "sitemap.json"
+  "sitemapLocation": "sitemap.json",
+  "useExtendedLib": {
+    "weui": true
+  },
+  "networkTimeout": {
+    "request": 10000
+    }
+
 }
