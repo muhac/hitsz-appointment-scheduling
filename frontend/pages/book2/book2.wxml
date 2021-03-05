@@ -1,7 +1,7 @@
 <view class="page" data-weui-theme="{{theme}}">
   <mp-toptips msg="{{error}}" type="error" show="{{error}}"></mp-toptips>
 
-  <mp-form-page title="心理咨询预约" subtitle="地点：信息楼L1103">
+  <mp-form-page title="心理咨询预约" subtitle="信息楼 · L1103">
     <mp-form id="form" rules="{{rules}}" models="{{formData}}">
       <mp-cells title="基本信息" footer="辅导员将负责对你进行心理辅导">
         <mp-cell prop="name" title="姓名" ext-class="">
