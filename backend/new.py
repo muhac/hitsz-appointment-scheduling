@@ -27,3 +27,12 @@ settings = {
 
 with open('data/settings.json', 'w') as f:
     json.dump(settings, f)
+
+dynamic = {
+    'work_days': ['2021 年 03 月 13 日', ],
+    'off_days': ['2021 年 03 月 12 日', ],
+    'blocked': []
+}
+
+with open('data/dynamic.json', 'w') as f:
+    json.dump(dynamic, f)
