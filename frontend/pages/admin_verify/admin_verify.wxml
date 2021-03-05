@@ -2,10 +2,12 @@
 <form bindsubmit="formSubmit">
   <view class='content'>
     <block wx:for="{{Length}}" wx:key="item">
-      <input class='iptbox' value="{{Value.length>=index+1?Value[index]:''}}" disabled password='{{ispassword}}' catchtap='Tap'></input>
+      <input class='iptbox' value="{{Value.length>=index+1?Value[index]:''}}" disabled password='{{ispassword}}'
+        catchtap='Tap'></input>
     </block>
   </view>
-  <input name="password" password="{{true}}" class='ipt' maxlength="{{Length}}" focus="{{isFocus}}" bindinput="Focus"></input>
+  <input name="password" password="{{true}}" class='ipt' maxlength="{{Length}}" focus="{{isFocus}}"
+    bindinput="Focus"></input>
   <view>
     <button class="btn-area" type='primary' disabled='{{disabled}}' formType="primary">下一步</button>
   </view>
