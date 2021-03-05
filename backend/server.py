@@ -3,6 +3,7 @@
 
 import json
 import requests
+from typing import Callable
 from datetime import datetime, timedelta
 
 from flask import *
@@ -17,9 +18,14 @@ with open('data/settings.json') as f_obj:
 
 def date_lang(date: str, lang: (str, str) = ('en', 'zh')) -> str:
     languages = settings['languages']
-    for source, target in zip(languages[lang[0]], languages[lang[1]]):
-        date = date.replace(source, target)
+    source_dict, target_dict = languages[lang[0]], languages[lang[1]]
+    for source_word, target_word in zip(source_dict, target_dict):
+        date = date.replace(source_word, target_word)
     return date
+
+
+def date_convert(date_format: str, lang: (str, str) = ('en', 'zh')) -> Callable:
+    return lambda z: datetime.strptime(date_lang(z, lang), date_format)
 
 
 def construct_response(msg: dict):
@@ -53,7 +59,7 @@ def get_uid():
 
 @app.route("/verify/", methods=['POST'])
 def admin_verification():
-    messages = {"statusCode": 200 if settings['password'] == request.json.get('password') else 500}
+    messages = {"statusCode": 200 if secrets['password'] == request.json.get('password') else 500}
     return construct_response(messages)
 
 
@@ -65,8 +71,7 @@ def reserve():
         with open('data/available.json') as f:
             schedule = json.load(f)
 
-        if not all([data.get('wx'), data.get('name'), data.get('sex'), data.get('id'), data.get('mobile'),
-                    data.get('teacher'), data.get('date'), data.get('hour'), data.get('detail')]) \
+        if not all([data.get(item) for item in settings['questionnaire']]) \
                 or schedule[data['date']][data['hour']] < 1 or data['wx'] in dynamic['blocked']:
             print('check failed')
             raise RuntimeError
@@ -81,7 +86,7 @@ def reserve():
 
         tickets = sorted(list(appointments.keys()), key=lambda z: int(z.split('@')[0]))
         ticket_id = 1 if not tickets else int(tickets[-1].split('@')[0]) + 1
-        new_ticket = settings['ticket_format'].format(ticket_id, datetime.now().strftime('%Y%m%d%M%S'))
+        new_ticket = settings['ticket_format'].format(ticket_id, datetime.now().strftime('%Y%m%d'))
 
         data['timestamp'] = datetime.now().strftime(settings['timestamp'])
         appointments[new_ticket] = data
@@ -109,11 +114,11 @@ def in_progress():
         with open('data/in_progress.json') as f:
             appointments = json.load(f)
 
-        time_format = lambda z: datetime.strptime(date_lang(z, ('zh', 'en')), settings['sort_helper'])
+        time_format = date_convert(settings['sort_helper'], ('zh', 'en'))
         tickets = sorted(list(appointments.keys()),
                          key=lambda z: time_format(appointments[z]['date'] + appointments[z]['hour']))
 
-        if user_filter != settings['password']:
+        if user_filter != secrets['password']:
             tickets_filtered = [ticket for ticket in tickets if appointments[ticket].get('wx') == user_filter]
             appointments_filtered = {ticket: appointments[ticket] for ticket in tickets_filtered}
             appointments, tickets = appointments_filtered, tickets_filtered
@@ -140,14 +145,13 @@ def available():
         with open('data/available.json') as f:
             schedule = json.load(f)
 
+        time_format = date_convert(settings['time_format'])
         dates = [date_lang(key, ('zh', 'en')) for key in list(schedule.keys())]
-        dates.sort(key=lambda z: datetime.strptime(z, settings['time_format']))
+        dates.sort(key=lambda z: time_format(z))
 
         if not dates or len(dates) != max_days or \
-                datetime.strptime(dates[0], settings['time_format']) < \
-                datetime.now() - timedelta(days=1) or \
-                datetime.strptime(dates[-1], settings['time_format']) < \
-                datetime.now() + timedelta(days=max_days - 2):
+                time_format(dates[0]) < datetime.now() - timedelta(days=1) or \
+                time_format(dates[-1]) < datetime.now() + timedelta(days=max_days - 2):
             print('update schedule')
 
             schedule_new = {}
@@ -166,7 +170,7 @@ def available():
                 json.dump(schedule_new, f)
             schedule = schedule_new
 
-        time_format = lambda z: datetime.strptime(date_lang(z, ('zh', 'en')), settings['time_format'])
+        time_format = date_convert(settings['time_format'], ('zh', 'en'))
         date = sorted(list(schedule.keys()), key=lambda z: time_format(z))
         hour = sorted(list(schedule[date[0]].keys()), key=lambda z: int(z[:2]))
 
@@ -177,7 +181,7 @@ def available():
                 and any(work_day in d for work_day in settings['work_days'] + dynamic['work_days'])]
         schedule = {d: schedule[d] for d in date}
 
-        time_format = lambda z: datetime.strptime(date_lang(z, ('zh', 'en')), settings['sort_helper'])
+        time_format = date_convert(settings['sort_helper'], ('zh', 'en'))
         schedule[date[0]] = {h: 0 if datetime.now() + timedelta(hours=settings['hour_before']) >
                                      time_format(date[0] + h) else schedule[date[0]][h] for h in hour}
 

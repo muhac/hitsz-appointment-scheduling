@@ -1,6 +1,5 @@
 import os
 import json
-import hashlib
 
 if not os.path.isdir('data'):
     os.mkdir('data')
@@ -12,7 +11,6 @@ with open('data/in_progress.json', 'w') as f:
     json.dump({}, f)
 
 settings = {
-    'password': hashlib.md5("000000".encode('utf-8')).hexdigest(),
     'teachers': ['应梦娴', '田薇', '梁羡飞', '李娜'],
     'time_format': '%Y 年 %m 月 %d 日 ・ %A',
     'work_start': [9, 10, 11, 14, 15, 16],
@@ -24,6 +22,7 @@ settings = {
     'ticket_format': '{:05d}@{}',
     'timestamp': '%Y 年 %m 月 %d 日 %H 时 %M 分 %S 秒',
     'sort_helper': '%Y 年 %m 月 %d 日 ・ %A%H:00 ~ %M:30',
+    'questionnaire': ['wx', 'id', 'name', 'sex', 'mobile', 'teacher', 'date', 'hour', 'detail'],
     'languages': {
         'en': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
         'zh': ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日']
