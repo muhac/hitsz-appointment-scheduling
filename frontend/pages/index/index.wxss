@@ -16,7 +16,7 @@
   color: #aaa;
 }
 
-.banner{
+.banner {
   width: 300px;
   height: 150px;
 }
@@ -26,8 +26,6 @@
   bottom: 10rpx;
   text-align: center;
 }
-
-
 
 .button {
   margin: 50rpx;
