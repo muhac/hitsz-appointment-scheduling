@@ -17,12 +17,13 @@ with open('data/settings.json') as f_obj:
 
 def date_lang(date: str, lang: (str, str) = ('en', 'zh')) -> str:
     languages = settings['languages']
-    for i in range(len(languages['en'])):
-        date = date.replace(languages[lang[0]][i], languages[lang[1]][i])
+    for source, target in zip(languages[lang[0]], languages[lang[1]]):
+        date = date.replace(source, target)
     return date
 
 
-def construct_response(msg):
+def construct_response(msg: dict):
+    print(msg)
     response = make_response(jsonify(msg))
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Methods'] = 'OPTIONS,HEAD,GET,POST'
@@ -46,7 +47,6 @@ def get_uid():
     url = 'https://api.weixin.qq.com/sns/jscode2session?' \
           'appid={}&secret={}&js_code={}&grant_type=authorization_code'
     rc = requests.get(url.format(secrets['AppID'], secrets['AppSecret'], code))
-    print(rc.json())
     messages = {"statusCode": 200, 'wx': rc.json().get('openid')}
     return construct_response(messages)
 
@@ -90,7 +90,6 @@ def reserve():
             json.dump(appointments, f)
 
     post = request.json
-    print(post)
     messages = {"statusCode": 200}
 
     try:
@@ -167,9 +166,9 @@ def available():
                 json.dump(schedule_new, f)
             schedule = schedule_new
 
-        date = sorted(list(schedule.keys()), key=lambda z: datetime.strptime(
-            date_lang(z, ('zh', 'en')), settings['time_format']))
-        hour = sorted(list(schedule[list(schedule.keys())[0]].keys()), key=lambda z: int(z[:2]))
+        time_format = lambda z: datetime.strptime(date_lang(z, ('zh', 'en')), settings['time_format'])
+        date = sorted(list(schedule.keys()), key=lambda z: time_format(z))
+        hour = sorted(list(schedule[date[0]].keys()), key=lambda z: int(z[:2]))
 
         with open('data/dynamic.json') as f:
             dynamic = json.load(f)
