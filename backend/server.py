@@ -1,6 +1,3 @@
-import os
-import time
-import base64
 import json
 from datetime import datetime, timedelta
 from flask import *
@@ -24,9 +21,20 @@ app = Flask(__name__, )
 CORS(app, resources=r'/*')
 
 
-@app.route("/test/", methods=['GET'])
-def test_page():
-    messages = {"statusCode": 200}
+@app.route("/", methods=['GET'])
+def index():
+    messages = {"statusCode": 200, 'GitHub': 'bugstop'}
+
+    response = make_response(jsonify(messages))
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'OPTIONS,HEAD,GET,POST'
+    response.headers['Access-Control-Allow-Headers'] = 'x-requested-with'
+    return response
+
+
+@app.route("/verify/", methods=['GET'])
+def admin_verification():
+    messages = {"statusCode": 200, 'password': settings['password']}
 
     response = make_response(jsonify(messages))
     response.headers['Access-Control-Allow-Origin'] = '*'
@@ -43,10 +51,9 @@ def reserve():
 
         if not all([
             data.get('name'),
-            data.get('name'),
+            data.get('sex'),
             data.get('id'),
             data.get('mobile'),
-            data.get('grade'),
             data.get('teacher'),
             data.get('date'),
             data.get('hour'),
@@ -63,10 +70,10 @@ def reserve():
         with open('data/in_progress.json') as f:
             appointments = json.load(f)
 
-        appointments.append(data)
-        appointments.sort(key=lambda z: datetime.strptime(
-            date_lang(z['date'] + z['hour'], ('zh', 'en')),
-            settings['sort_helper']))
+        tickets = sorted(list(appointments.keys()), key=lambda z: int(z.split('@')[0]))
+        ticket_id = 1 if not tickets else int(tickets[-1].split('@')[0]) + 1
+        new_ticket = '{:05d}@{}'.format(ticket_id, datetime.now().strftime('%Y%m%d%M%S'))
+        appointments[new_ticket] = data
 
         with open('data/in_progress.json', 'w') as f:
             json.dump(appointments, f)
@@ -95,12 +102,22 @@ def in_progress():
     def get_data():
         with open('data/in_progress.json') as f:
             appointments = json.load(f)
-        return appointments
+
+        tickets = sorted(list(appointments.keys()),
+                         key=lambda z: datetime.strptime(
+                             date_lang(appointments[z]['date'] +
+                                       appointments[z]['hour'], ('zh', 'en')),
+                             settings['sort_helper'])
+                         )
+
+        return appointments, tickets
 
     messages = {'statusCode': 200}
 
     try:
-        messages['inProgress'] = get_data()
+        data = get_data()
+        messages['tickets'] = data[1]
+        messages['inProgress'] = data[0]
     except Exception as e:
         print(e)
         messages['statusCode'] = 500
@@ -151,7 +168,7 @@ def available():
     messages = {"statusCode": 200}
 
     try:
-        data = get_data()
+        data = get_data(settings['max_days'])
         messages['date'] = data[1]
         messages['hour'] = data[2]
         messages['schedule'] = data[0]
