@@ -19,11 +19,12 @@
 .usermotto {
   position: absolute;
   bottom: 10rpx;
+  text-align: center;
 }
 
 
 
-.button{
+.button {
   margin: 50rpx;
   padding: 20rpx 50rpx;
   border-style: solid;
@@ -32,18 +33,17 @@
   border-radius: 20rpx;
 }
 
-.buttonHover{
+.buttonHover {
   margin: 50rpx;
   padding: 20rpx 50rpx;
   border-style: solid;
   border-width: 1rpx;
   border-color: #aaa;
-  background:lightblue;
+  background: lightblue;
   color: white;
   border-radius: 20rpx;
 }
 
-.options{
+.options {
   margin-top: 100rpx;
 }
-
