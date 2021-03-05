@@ -8,7 +8,6 @@
     </mp-dialog>
 
     <view class="page__bd">
-
         <view class="weui-form-preview" wx:for="{{tickets}}" wx:key="index">
             <view class="weui-form-preview__hd">
                 <view class="weui-form-preview__item">
@@ -47,7 +46,5 @@
                 <view bindtap="detailonclick" data-value="{{inProgress[tickets[index]].detail}}" class="weui-form-preview__btn weui-form-preview__btn_primary" hover-class="weui-form-preview__btn_active">详情</view>
             </view>
         </view>
-        
-  
     </view>
 </view>
