@@ -2,11 +2,8 @@
   "pages":[
     "pages/book2/book2",
     "pages/index/index",
-
     "pages/logs/logs",
     "pages/admin_verify/admin_verify"
-
-
   ],
   "window":{
     "backgroundTextStyle":"light",
