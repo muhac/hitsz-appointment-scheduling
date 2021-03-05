@@ -1,5 +1,4 @@
 /* pages/book/book.wxss */
-@import "/lib/weui.wxss";
 
 page{
   background-color: #F8F8F8;
@@ -9,26 +8,13 @@ page{
   margin-bottom: 20rpx;
 }
 
-.button{
-  margin: 50rpx;
-  padding: 20rpx 50rpx;
-  border-style: solid;
-  border-width: 1rpx;
-  border-color: #aaa;
-  border-radius: 20rpx;
-}
-
-.buttonHover{
-  margin: 50rpx;
-  padding: 20rpx 50rpx;
-  border-style: solid;
-  border-width: 1rpx;
-  border-color: #aaa;
-  background:lightblue;
-  color: white;
-  border-radius: 20rpx;
+.page-body{
+  margin-bottom: 1rpx;
 }
 
 .btn-area{
-  margin: 50rpx;
+  padding: 8px;
+  display: flex;
+  justify-content: center;
+  align-items:flex-end; 
 }
