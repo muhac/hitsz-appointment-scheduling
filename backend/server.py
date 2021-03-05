@@ -16,10 +16,7 @@ with open('data/settings.json') as f_obj:
 
 
 def date_lang(date: str, lang: (str, str) = ('en', 'zh')) -> str:
-    languages = {
-        'en': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-        'zh': ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日']
-    }
+    languages = settings['languages']
     for i in range(len(languages['en'])):
         date = date.replace(languages[lang[0]][i], languages[lang[1]][i])
     return date
@@ -46,7 +43,8 @@ def index():
 @app.route("/uid/", methods=['POST'])
 def get_uid():
     code = request.json.get('code')
-    url = 'https://api.weixin.qq.com/sns/jscode2session?appid={}&secret={}&js_code={}&grant_type=authorization_code'
+    url = 'https://api.weixin.qq.com/sns/jscode2session?' \
+          'appid={}&secret={}&js_code={}&grant_type=authorization_code'
     rc = requests.get(url.format(secrets['AppID'], secrets['AppSecret'], code))
     print(rc.json())
     messages = {"statusCode": 200, 'wx': rc.json().get('openid')}
@@ -69,7 +67,7 @@ def reserve():
 
         if not all([data.get('wx'), data.get('name'), data.get('sex'), data.get('id'), data.get('mobile'),
                     data.get('teacher'), data.get('date'), data.get('hour'), data.get('detail')]) \
-                or schedule[data['date']][data['hour']] < 1 or data.get('wx') in dynamic['blocked']:
+                or schedule[data['date']][data['hour']] < 1 or data['wx'] in dynamic['blocked']:
             print('check failed')
             raise RuntimeError
 
@@ -112,8 +110,9 @@ def in_progress():
         with open('data/in_progress.json') as f:
             appointments = json.load(f)
 
-        tickets = sorted(list(appointments.keys()), key=lambda z: datetime.strptime(
-            date_lang(appointments[z]['date'] + appointments[z]['hour'], ('zh', 'en')), settings['sort_helper']))
+        time_format = lambda z: datetime.strptime(date_lang(z, ('zh', 'en')), settings['sort_helper'])
+        tickets = sorted(list(appointments.keys()),
+                         key=lambda z: time_format(appointments[z]['date'] + appointments[z]['hour']))
 
         if user_filter != settings['password']:
             tickets_filtered = [ticket for ticket in tickets if appointments[ticket].get('wx') == user_filter]
@@ -179,6 +178,10 @@ def available():
                 and any(work_day in d for work_day in settings['work_days'] + dynamic['work_days'])]
         schedule = {d: schedule[d] for d in date}
 
+        time_format = lambda z: datetime.strptime(date_lang(z, ('zh', 'en')), settings['sort_helper'])
+        schedule[date[0]] = {h: 0 if datetime.now() + timedelta(hours=settings['hour_before']) >
+                                     time_format(date[0] + h) else schedule[date[0]][h] for h in hour}
+
         return schedule, date, hour
 
     messages = {"statusCode": 200}
@@ -189,7 +192,6 @@ def available():
         messages['hour'] = data[2]
         messages['schedule'] = data[0]
         messages['teachers'] = settings['teachers']
-        print(messages['date'])
     except Exception as e:
         print(e)
         messages['statusCode'] = 500
