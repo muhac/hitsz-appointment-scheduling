@@ -16,12 +16,16 @@
   color: #aaa;
 }
 
+.banner {
+  width: 300px;
+  height: 150px;
+}
+
 .usermotto {
   position: absolute;
   bottom: 10rpx;
+  text-align: center;
 }
-
-
 
 .button {
   margin: 50rpx;

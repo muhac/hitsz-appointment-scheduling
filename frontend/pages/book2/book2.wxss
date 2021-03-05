@@ -1,0 +1,5 @@
+/* pages/book2/book2.wxss */
+
+.weui-agree .weui-agree__text {
+  display: inline;
+}

@@ -1,0 +1,50 @@
+<view class="page" data-weui-theme="{{theme}}">
+  <mp-dialog title="遇到的困惑与希望得到的帮助" show="{{dialogShow}}" bindbuttontap="tapDialogButton" buttons="{{buttons}}">
+        <view>{{dialogContent}}</view>
+    </mp-dialog>
+
+    <mp-dialog title="提示" show="{{dialogShow_del}}" bindbuttontap="tapDialogButton_del" buttons="{{buttons_del}}">
+        <view>确定要删除此条预约吗？</view>
+    </mp-dialog>
+
+    <view class="page__bd">
+        <view class="weui-form-preview" wx:for="{{tickets}}" wx:key="index">
+            <view class="weui-form-preview__hd">
+                <view class="weui-form-preview__item">
+                    <view class="weui-form-preview__label">预约人</view>
+                    <view class="weui-form-preview__value_in-hd">{{inProgress[tickets[index]].name}}</view>
+                </view>
+            </view>
+            <view class="weui-form-preview__bd">
+                <view class="weui-form-preview__item">
+                    <view class="weui-form-preview__label">辅导员</view>
+                    <view class="weui-form-preview__value">{{inProgress[tickets[index]].teacher}}</view>
+                </view>
+                <view class="weui-form-preview__item">
+                    <view class="weui-form-preview__label">性别</view>
+                    <view class="weui-form-preview__value">{{inProgress[tickets[index]].sex}}</view>
+                </view>
+                <view class="weui-form-preview__item">
+                    <view class="weui-form-preview__label">学号</view>
+                    <view class="weui-form-preview__value">{{inProgress[tickets[index]].id}}</view>
+                </view>
+                <view class="weui-form-preview__item">
+                    <view class="weui-form-preview__label">手机</view>
+                    <view class="weui-form-preview__value">{{inProgress[tickets[index]].mobile}}</view>
+                </view>
+                <view class="weui-form-preview__item">
+                    <view class="weui-form-preview__label">预约日期</view>
+                    <view class="weui-form-preview__value">{{inProgress[tickets[index]].date}}</view>
+                </view>
+                <view class="weui-form-preview__item">
+                    <view class="weui-form-preview__label">预约时间</view>
+                    <view class="weui-form-preview__value">{{inProgress[tickets[index]].hour}}</view>
+                </view>
+            </view>
+            <view class="weui-form-preview__ft">
+              <view  bindtap="delonclick" data-value="{{tickets[index]}}" class="weui-form-preview__btn weui-form-preview__btn_default" hover-class="weui-form-preview__btn_active">删除</view>
+                <view bindtap="detailonclick" data-value="{{inProgress[tickets[index]].detail}}" class="weui-form-preview__btn weui-form-preview__btn_primary" hover-class="weui-form-preview__btn_active">详情</view>
+            </view>
+        </view>
+    </view>
+</view>
