@@ -17,9 +17,11 @@
 }
 
 .usermotto {
-  position: absolute;
+  position: relative;
+  float: bottom;
   bottom: 10rpx;
   text-align: center;
+  z-index: 100;
 }
 
 
@@ -46,4 +48,11 @@
 
 .options {
   margin-top: 100rpx;
+}
+
+.mask{
+  width:100vw;
+  height:100vh;
+  z-index: 2000;
+
 }

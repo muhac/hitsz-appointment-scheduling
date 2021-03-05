@@ -1,0 +1,7 @@
+/* pages/admin/admin.wxss */
+
+
+
+.weui-form-preview{
+  margin-bottom: 25px;
+}

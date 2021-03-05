@@ -1,6 +1,7 @@
 Page({
     data: {
         showTopTips: false,
+        userInfo:[],
 
         sex: ["男", "女"],
         sexIndex: -1,
@@ -84,6 +85,9 @@ Page({
 
     onLoad: function (options) {
         var that = this
+        this.setData({
+            userInfo:app.globalData.userInfo,
+        })
         wx.getStorage({
             key: 'name',
             success(res) {
