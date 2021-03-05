@@ -1,3 +1,6 @@
+# Author: limuhan
+# GitHub: bugstop
+
 import json
 import requests
 from datetime import datetime, timedelta
@@ -59,12 +62,14 @@ def admin_verification():
 @app.route("/reserve/", methods=['POST'])
 def reserve():
     def check_data(data):
+        with open('data/dynamic.json') as f:
+            dynamic = json.load(f)
         with open('data/available.json') as f:
             schedule = json.load(f)
 
         if not all([data.get('wx'), data.get('name'), data.get('sex'), data.get('id'), data.get('mobile'),
                     data.get('teacher'), data.get('date'), data.get('hour'), data.get('detail')]) \
-                or schedule[data['date']][data['hour']] < 1:
+                or schedule[data['date']][data['hour']] < 1 or data.get('wx') in dynamic['blocked']:
             print('check failed')
             raise RuntimeError
 
@@ -167,7 +172,11 @@ def available():
             date_lang(z, ('zh', 'en')), settings['time_format']))
         hour = sorted(list(schedule[list(schedule.keys())[0]].keys()), key=lambda z: int(z[:2]))
 
-        date = [d for d in date if any(work_day in d for work_day in settings['work_days'])]
+        with open('data/dynamic.json') as f:
+            dynamic = json.load(f)
+
+        date = [d for d in date if not any(off_day in d for off_day in dynamic['off_days'])
+                and any(work_day in d for work_day in settings['work_days'] + dynamic['work_days'])]
         schedule = {d: schedule[d] for d in date}
 
         return schedule, date, hour
