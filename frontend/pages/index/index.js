@@ -40,7 +40,11 @@ Page({
       })
   },
   changebanner(){
-    var i=Math.ceil(Math.random()*7)
+    var i=this.data.banner;
+    i=i+1;
+    if(i>7){
+      i=1;
+    }
     this.setData({
       banner:i
     })
