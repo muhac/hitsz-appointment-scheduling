@@ -1,10 +1,10 @@
 <view class="page" data-weui-theme="{{theme}}">
   <mp-dialog title="提示" show="{{dialogShow}}" bindbuttontap="tapDialogButton" buttons="{{buttons}}">
-    <view>我的预约中只会显示</view>
+    <view>确定要关闭此条预约吗？（关闭后预约时间仍然被占用）</view>
   </mp-dialog>
 
   <mp-dialog title="提示" show="{{dialogShow_del}}" bindbuttontap="tapDialogButton_del" buttons="{{buttons_del}}">
-    <view>确定要删除此条预约吗？</view>
+    <view>确定要删除此条预约吗？（删除后预约时间不会被占用）</view>
   </mp-dialog>
 
   <view class="page__bd">
@@ -56,7 +56,7 @@
       </view>
       <view class="weui-form-preview__ft">
       <view  bindtap="delonclick" data-value="{{tickets[index]}}" class="weui-form-preview__btn weui-form-preview__btn_default" hover-class="weui-form-preview__btn_active">删除</view>
-       <view bindtap="detailonclick" data-value="{{inProgress[tickets[index]].detail}}" class="weui-form-preview__btn weui-form-preview__btn_primary" hover-class="weui-form-preview__btn_active">关闭</view>
+       <view bindtap="closeonclick" data-value="{{tickets[index]}}" class="weui-form-preview__btn weui-form-preview__btn_primary" hover-class="weui-form-preview__btn_active">关闭</view>
       </view>
 
     </view>
