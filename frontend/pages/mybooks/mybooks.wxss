@@ -4,15 +4,54 @@
   margin-bottom: 25px;
 }
 
-.empty{
+.empty {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top:100rpx;
-  margin:20rpx;
+  margin-top: 100rpx;
+  margin: 20rpx;
   font-size: 20px;
   color: #666666;
+  position: relative;
+  /*脱离文档流*/
+  margin-top: 45%;
+  /*偏移*/
+
 }
 
+.weui-tab__content {
+  padding-top: 60px;
+  text-align: center;
+}
+
+#top {
+  height: 15rpx;
+  background: linear-gradient(180deg, #ffffff, #fcfcfc);
+}
+
+.weui-navbar {
+  background: linear-gradient(180deg, #fcfcfc, #f9f9f9);
+}
+.weui-navbar__item {
+  margin: 0rpx 50rpx 15rpx 50rpx;
+  padding: 20rpx !important;
+}
+
+.weui-navbar__title {
+  padding: 0;
+  color: dimgray;
+}
+
+.weui-bar__item_on {
+  border-radius: 15rpx;
+background: linear-gradient(145deg, #ffffff, #fafafa);
+box-shadow:  3rpx 3rpx 6rpx #d9d9d9,
+             -3rpx -3rpx 6rpx #ffffff;
+}
+
+.weui-navbar__item::after {
+  width: 0 !important;
+  border-right-width: 0 !important;
+}
 
 @import 'mybooks-wxa-auto-dark.wxss'
