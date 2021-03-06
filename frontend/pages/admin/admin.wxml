@@ -1,13 +1,20 @@
 <view class="page" data-weui-theme="{{theme}}">
   <mp-dialog title="提示" show="{{dialogShow}}" bindbuttontap="tapDialogButton" buttons="{{buttons}}">
-    <view>确定要关闭此条预约吗？（关闭后预约时间仍然被占用）</view>
+    <view style="white-space:pre-wrap">确定要关闭此条预约吗？\n（关闭后预约时间仍然被占用）</view>
   </mp-dialog>
-
   <mp-dialog title="提示" show="{{dialogShow_del}}" bindbuttontap="tapDialogButton_del" buttons="{{buttons_del}}">
-    <view>确定要删除此条预约吗？（删除后预约时间不会被占用）</view>
+    <view style="white-space:pre-wrap">确定要删除此条预约吗？\n（删除后预约时间不会被占用）</view>
   </mp-dialog>
-
+  <view id="top"></view>
   <view class="page__bd">
+    <view class="weui-navbar">
+                <block wx:for="{{tabs}}" wx:key="*this">
+                    <view id="{{index}}" class="weui-navbar__item {{activeIndex == index ? 'weui-bar__item_on' : ''}}" bindtap="tabClick">
+                        <view class="weui-navbar__title">{{item}}</view>
+                    </view>
+                </block>
+            </view>
+
   <view class="empty" wx:if="{{tickets.length==0}}">
   <icon type="waiting" size="100" color="#666666"/>
   <view>空空如也</view>
@@ -56,14 +63,14 @@
       </view>
       <view class="weui-form-preview__ft">
       <view  bindtap="delonclick" data-value="{{tickets[index]}}" class="weui-form-preview__btn weui-form-preview__btn_default" hover-class="weui-form-preview__btn_active">删除</view>
-       <view bindtap="closeonclick" data-value="{{tickets[index]}}" class="weui-form-preview__btn weui-form-preview__btn_primary" hover-class="weui-form-preview__btn_active">关闭</view>
+       <view bindtap="closeonclick" data-value="{{tickets[index]}}" class="weui-form-preview__btn weui-form-preview__btn_primary" hover-class="weui-form-preview__btn_active" wx:if="{{activeIndex==0}}">关闭</view>
       </view>
 
     </view>
 
   </view>
-  <view class="weui-footer">
-      <view>Tips:过期的预约将会自动删除，请注意\n</view>
-      <text decode>&nbsp;</text>
-    </view>
+  <!--<view class="weui-footer">
+    <view>Tips:过期的预约将会自动删除，请注意\n</view>
+    <text decode>&nbsp;</text>
+  </view>-->
 </view>

@@ -10,6 +10,9 @@ with open('data/schedules.json', 'w') as f:
 with open('data/tickets.json', 'w') as f:
     json.dump({}, f)
 
+with open('data/tickets_closed.json', 'w') as f:
+    json.dump({}, f)
+
 settings = {
     'teachers': ['应梦娴', '田薇', '梁羡飞', '李娜'],  # 辅导员列表
     'time_format': '%Y 年 %m 月 %d 日 ・ %A',  # 显示日期格式
@@ -23,6 +26,12 @@ settings = {
     'timestamp': '%Y-%m-%d %H:%M:%S',  # 工单时间戳格式
     'sort_helper': '%Y 年 %m 月 %d 日 ・ %A%H:00 ~ %M:30',  # 辅助排序的时间戳格式
     'questionnaire': ['wx', 'id', 'name', 'sex', 'mobile', 'teacher', 'date', 'hour', 'detail'],  # 必填项
+    'emails': {
+        '应梦娴': '916720619@qq.com',
+        '梁羡飞': '2695998275@qq.com',
+        '田薇': '635661409@qq.com',
+        '李娜': '2076505738@qq.com',
+    },
     'languages': {  # 时间戳翻译
         'en': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
         'zh': ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日']

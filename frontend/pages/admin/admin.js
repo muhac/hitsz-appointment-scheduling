@@ -1,11 +1,16 @@
 // pages/mybooks/mybooks.js
 const app = getApp()
+var sliderWidth = 96;
 Page({
 
   /**
    * 页面的初始数据
    */
   data: {
+    tabs: ["进行中", "已关闭"],
+    activeIndex: 0,
+    sliderOffset: 0,
+    sliderLeft: 0,
     inProgress: [],
     tickets: [],
     dialogShow: false,
@@ -28,6 +33,7 @@ Page({
    */
   onLoad: function (options) {
     var that = this;
+    var tag = this.data.activeIndex == 0 ? "open" : "closed";
     wx.showLoading({
       title: "获取数据中",
       mask: true
@@ -39,7 +45,8 @@ Page({
         'Content-Type': 'application/json'
       },
       data: {
-        user: app.globalData.admin_password
+        user: app.globalData.admin_password,
+        tag: tag
       },
       method: "POST",
       success(res) {
@@ -49,7 +56,7 @@ Page({
         if (res.data.statusCode == 200) {
           that.setData({
             inProgress: res.data.inProgress,
-            tickets: res.data.tickets.reverse(), //后端发来的数据是按时间从早到晚顺序的，所以reverse一下
+            tickets: res.data.tickets,
             //res代表success函数的事件对，data是固定的，list是数组
           })
         } else {
@@ -172,7 +179,7 @@ Page({
         data: {
           user: app.globalData.admin_password,
           tid: that.data.ticket_chosen,
-          op: "close"
+          op: "closed"
         },
         complete() {
           wx.showLoading();
@@ -208,8 +215,81 @@ Page({
     }
   },
 
+
+  tabClick: function (e) {
+    var activeIndex = e.currentTarget.id;
+    var that = this;
+    var tag = activeIndex == 0 ? "open" : "closed";
+
+    console.log(activeIndex)
+
+
+    console.log(tag)
+
+    wx.showLoading({
+      title: "获取数据中",
+      mask: true
+    })
+    wx.request({
+      url: 'https://www.bugstop.site/list/',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      data: {
+        user: app.globalData.admin_password,
+        tag: tag
+      },
+      method: "POST",
+      success(res) {
+        console.log(res.data)
+        wx.hideLoading();
+        //将获取到的json数据，存在名字叫list的这个数组中
+        if (res.data.statusCode == 200) {
+          that.setData({
+            inProgress: res.data.inProgress,
+            tickets: res.data.tickets,
+            //res代表success函数的事件对，data是固定的，list是数组
+          })
+        } else {
+          wx.showToast({
+            title: "获取数据失败",
+            icon: 'error', //如果要纯文本，不要icon，将值设为'none'
+            mask: true,
+            duration: 3000
+          })
+
+          setTimeout(function () {
+            wx.reLaunch({
+              url: '/pages/index/index'
+            })
+          }, 2000)
+        };
+      },
+      fail() {
+        wx.hideLoading();
+        wx.showToast({
+          title: "获取数据超时",
+          icon: 'error', //如果要纯文本，不要icon，将值设为'none'
+          mask: true,
+          duration: 3000
+        })
+        setTimeout(function () {
+          wx.reLaunch({
+            url: '/pages/index/index'
+          })
+        }, 2000)
+      },
+      complete() {
+        that.setData({
+          sliderOffset: e.currentTarget.offsetLeft,
+          activeIndex: activeIndex
+        });
+      }
+    })
+  },
+
   tapDialogButton_del: function (e) {
-    var that=this
+    var that = this
     console.log(e)
     this.setData({
       dialogShow_del: false,
