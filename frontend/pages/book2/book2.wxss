@@ -4,4 +4,8 @@
   display: inline;
 }
 
+.weui-form__opr-area {
+  margin-bottom: 0;
+}
+
 @import 'book2-wxa-auto-dark.wxss'
