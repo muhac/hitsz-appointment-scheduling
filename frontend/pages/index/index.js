@@ -39,4 +39,14 @@ Page({
         banner:i
       })
   },
+  changebanner(){
+    var i=this.data.banner;
+    i=i+1;
+    if(i>7){
+      i=1;
+    }
+    this.setData({
+      banner:i
+    })
+  }
 })

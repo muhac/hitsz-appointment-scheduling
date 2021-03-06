@@ -58,4 +58,8 @@
   margin-top: 80rpx;
 }
 
+.footer {
+  position: absolute;
+  bottom: 30rpx;
+}
 @import 'index-wxa-auto-dark.wxss'
