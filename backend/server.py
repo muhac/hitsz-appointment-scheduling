@@ -78,7 +78,7 @@ def time_shift(*args: Any, **kwargs: Any) -> datetime:
 
 
 def date_lang(date: str, lang: (str, str) = ('en', 'zh')) -> str:
-    """时间戳中英互译 TODO: 前端渲染"""
+    """时间戳中英互译"""
     languages: dict = settings['languages']
     source_words, target_words = languages[lang[0]], languages[lang[1]]
     for source_word, target_word in zip(source_words, target_words):
@@ -285,8 +285,8 @@ def make_reservations():
         logging.info(('reserve:', 'write data'))
         Process(target=save_data, args=(appointments, 'tickets.json')).start()
 
-        mail_content = '{}老师，{}（{}）预约了 {} ・ {} 的心理咨询。'.format(
-            ticket['teacher'], ticket['name'], ticket['mobile'], ticket['date'], ticket['hour'])
+        mail_content = '{}老师，{}预约了 {}{} 的心理咨询。'.format(
+            ticket['teacher'], '有同学', ticket['date'].split('·')[0], ticket['hour'][:5])
         Process(target=send_mail, args=('limuhan@live.com', '新的心理咨询预约', mail_content)).start()
         # TODO: 测试完成后将收件人改为 settings['emails'][ticket['teacher']]
 
