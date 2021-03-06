@@ -97,7 +97,7 @@ def save_data(data: Any, filename: str) -> None:
 
 def construct_response(msg: dict) -> Any:
     """响应请求构建"""
-    print('response:', msg)
+    # print('response:', msg)
     response = make_response(jsonify(msg))
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Methods'] = 'OPTIONS,HEAD,GET,POST'
@@ -116,7 +116,7 @@ def index():
     return construct_response(messages)
 
 
-@app.route("/uid/", methods=['POST'])
+@app.route("/user/id/", methods=['POST'])
 def get_uid():
     """获得用户唯一微信ID"""
     code = request.json.get('code')
@@ -138,7 +138,7 @@ def get_uid():
     return construct_response(messages)
 
 
-@app.route("/verify/", methods=['POST'])
+@app.route("/user/verify/", methods=['POST'])
 def admin_verification():
     """验证管理员密码"""
     admin = secrets['password'] == request.json.get('password')
@@ -146,7 +146,7 @@ def admin_verification():
     return construct_response(messages)
 
 
-@app.route("/available/", methods=['GET'])
+@app.route("/plan/empty/", methods=['GET'])
 def schedule_available():
     """展示可供预约的时间段"""
 
@@ -159,7 +159,7 @@ def schedule_available():
 
         # 检测数据完整性：是否包含从当日起共[max_days]天
         if not dates or len(dates) != max_days or \
-                time_format(dates[0]) < time_shift(days=1) or \
+                time_format(dates[0]) < time_shift(days=-1) or \
                 time_format(dates[-1]) < time_shift(days=max_days - 2):
 
             schedule_new = {}
@@ -207,7 +207,7 @@ def schedule_available():
     return construct_response(messages)
 
 
-@app.route("/list/", methods=['POST'])
+@app.route("/plan/list/", methods=['POST'])
 def show_reservations():
     """展示预约工单列表"""
 
@@ -239,7 +239,7 @@ def show_reservations():
         ticket_status = request.json.get('tag')
         reservations = list_data(username, ticket_status)
         messages['tickets'] = reservations[1]
-        messages['inProgress'] = reservations[0]
+        messages['reservations'] = reservations[0]
     except Exception as e:
         print('list reservation error:', e)
         messages = {'statusCode': 500, 'error': e}
@@ -247,7 +247,7 @@ def show_reservations():
     return construct_response(messages)
 
 
-@app.route("/reserve/", methods=['POST'])
+@app.route("/plan/new/", methods=['POST'])
 def make_reservations():
     """预约心理咨询"""
 
@@ -292,7 +292,7 @@ def make_reservations():
     return construct_response(messages)
 
 
-@app.route("/edit/", methods=['POST'])
+@app.route("/plan/edit/", methods=['POST'])
 def edit_reservations():
     """更改心理咨询预约工单的状态"""
 

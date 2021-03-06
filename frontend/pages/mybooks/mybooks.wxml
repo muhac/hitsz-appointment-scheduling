@@ -20,42 +20,42 @@
       <view class="weui-form-preview__hd">
         <view class="weui-form-preview__item">
           <view class="weui-form-preview__label">预约人</view>
-          <view class="weui-form-preview__value_in-hd">{{inProgress[tickets[index]].name}}</view>
+          <view class="weui-form-preview__value_in-hd">{{reservations[tickets[index]].name}}</view>
         </view>
       </view>
       <view class="weui-form-preview__bd">
         <view class="weui-form-preview__item">
           <view class="weui-form-preview__label">提交时间</view>
-          <view class="weui-form-preview__value">{{inProgress[tickets[index]].timestamp}}</view>
+          <view class="weui-form-preview__value">{{reservations[tickets[index]].timestamp}}</view>
         </view>
         <view class="weui-form-preview__item">
           <view class="weui-form-preview__label">辅导员</view>
-          <view class="weui-form-preview__value">{{inProgress[tickets[index]].teacher}}</view>
+          <view class="weui-form-preview__value">{{reservations[tickets[index]].teacher}}</view>
         </view>
         <view class="weui-form-preview__item">
           <view class="weui-form-preview__label">性别</view>
-          <view class="weui-form-preview__value">{{inProgress[tickets[index]].sex}}</view>
+          <view class="weui-form-preview__value">{{reservations[tickets[index]].sex}}</view>
         </view>
         <view class="weui-form-preview__item">
           <view class="weui-form-preview__label">学号</view>
-          <view class="weui-form-preview__value">{{inProgress[tickets[index]].id}}</view>
+          <view class="weui-form-preview__value">{{reservations[tickets[index]].id}}</view>
         </view>
         <view class="weui-form-preview__item">
           <view class="weui-form-preview__label">手机</view>
-          <view class="weui-form-preview__value">{{inProgress[tickets[index]].mobile}}</view>
+          <view class="weui-form-preview__value">{{reservations[tickets[index]].mobile}}</view>
         </view>
         <view class="weui-form-preview__item">
           <view class="weui-form-preview__label">预约日期</view>
-          <view class="weui-form-preview__value">{{inProgress[tickets[index]].date}}</view>
+          <view class="weui-form-preview__value">{{reservations[tickets[index]].date}}</view>
         </view>
         <view class="weui-form-preview__item">
           <view class="weui-form-preview__label">预约时间</view>
-          <view class="weui-form-preview__value">{{inProgress[tickets[index]].hour}}</view>
+          <view class="weui-form-preview__value">{{reservations[tickets[index]].hour}}</view>
         </view>
 
         <view class="weui-form-preview__item">
           <view class="weui-form-preview__label">困惑与帮助</view>
-          <view class="weui-form-preview__value">{{inProgress[tickets[index]].detail}}</view>
+          <view class="weui-form-preview__value">{{reservations[tickets[index]].detail}}</view>
         </view>
       </view>
       <view class="weui-form-preview__ft">
