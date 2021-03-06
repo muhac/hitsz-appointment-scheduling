@@ -136,7 +136,7 @@ def make_reservations():
         print('reserve: write data')
         Process(target=save_data, args=(appointments, 'tickets.json')).start()
 
-        mail_content = '{}老师，{}（{}）预约了{} ・ {}的心理咨询。'.format(
+        mail_content = '{}老师，{}（{}）预约了 {} ・ {} 的心理咨询。'.format(
             data["teacher"], data['name'], data['mobile'], data['date'], data['hour'])
         Process(target=send_mail, args=('limuhan@live.com', '新的心理咨询预约', mail_content)).start()
 
