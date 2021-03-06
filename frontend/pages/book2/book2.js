@@ -275,7 +275,7 @@ Page({
                         switch (res.data.statusCode) {
                             case 200:
                                 wx.showToast({
-                                    title: "预约成功！",
+                                    title: "预约成功",
                                     icon: "success", //如果要纯文本，不要icon，将值设为'none'
                                     mask: true,
                                     duration: 3000,
