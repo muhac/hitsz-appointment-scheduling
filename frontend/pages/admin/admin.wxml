@@ -2,11 +2,10 @@
   <mp-dialog title="提示" show="{{dialogShow}}" bindbuttontap="tapDialogButton" buttons="{{buttons}}">
     <view style="white-space:pre-wrap">确定要关闭此条预约吗？\n（关闭后预约时间仍然被占用）</view>
   </mp-dialog>
-
   <mp-dialog title="提示" show="{{dialogShow_del}}" bindbuttontap="tapDialogButton_del" buttons="{{buttons_del}}">
     <view style="white-space:pre-wrap">确定要删除此条预约吗？\n（删除后预约时间不会被占用）</view>
   </mp-dialog>
-
+  <view id="top"></view>
   <view class="page__bd">
     <view class="weui-navbar">
                 <block wx:for="{{tabs}}" wx:key="*this">

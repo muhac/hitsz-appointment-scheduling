@@ -2,6 +2,7 @@
   <mp-dialog title="提示" show="{{dialogShow_del}}" bindbuttontap="tapDialogButton_del" buttons="{{buttons_del}}">
     <view>确定要取消预约吗？</view>
   </mp-dialog>
+  <view id="top"></view>
   <view class="page__bd">
     <view class="weui-navbar">
       <block wx:for="{{tabs}}" wx:key="*this">
