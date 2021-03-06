@@ -7,7 +7,7 @@ Page({
    * 页面的初始数据
    */
   data: {
-    tabs: ["进行中", "已关闭"],
+    tabs: ["进行中", "已完成"],
     activeIndex: 0,
     sliderOffset: 0,
     sliderLeft: 0,
