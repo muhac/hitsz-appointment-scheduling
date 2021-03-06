@@ -22,23 +22,23 @@ from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 
 
-path = os.path.dirname(inspect.getfile(inspect.currentframe())) + '/data/'
+path = os.path.dirname(inspect.getfile(inspect.currentframe()))
 
-log_file = path + 'server.log'
+log_file = path + '/server.log'
 log_format = "%(asctime)s - %(levelname)s - %(message)s"
 logging.basicConfig(filename=log_file, level=logging.INFO, format=log_format)
 
-with open(path + 'secrets.json') as f_obj:
+with open(path + '/data/secrets.json') as f_obj:
     secrets: dict = json.load(f_obj)              # 储存敏感信息
-with open(path + 'settings.json') as f_obj:
+with open(path + '/data/settings.json') as f_obj:
     settings: dict = json.load(f_obj)             # 储存基本设置
-with open(path + 'schedules.json') as f_obj:
+with open(path + '/data/schedules.json') as f_obj:
     schedule: dict = json.load(f_obj)             # 储存预约余量
-with open(path + 'tickets.json') as f_obj:
+with open(path + '/data/tickets.json') as f_obj:
     appointments: dict = json.load(f_obj)         # 储存进行中预约
-with open(path + 'tickets_closed.json') as f_obj:
+with open(path + '/data/tickets_closed.json') as f_obj:
     appointments_closed: dict = json.load(f_obj)  # 储存已完成预约
-with open(path + 'dynamic.json') as f_obj:
+with open(path + '/data/dynamic.json') as f_obj:
     dynamic: dict = json.load(f_obj)              # 储存动态规则
 
 logging.info(('Loaded data', settings, schedule,
@@ -95,7 +95,7 @@ def save_data(data: Any, filename: str) -> None:
     """备份数据（没有数据库，只有json）"""
     logging.warning(('update:', filename))
     try:
-        with open(path + filename, 'w') as f:
+        with open(path + '/data/' + filename, 'w') as f:
             json.dump(data, f)
     except Exception as e:
         # 仅作为备份，实时数据全在内存，少量失败问题不大（？）
@@ -174,7 +174,7 @@ def schedule_available():
                 date = date_lang(time_shift(days=day).strftime(settings['time_format']))
                 schedule_new[date] = {}
                 for start in settings['work_start']:
-                    hour = settings['work_hours'].format(start, start)
+                    hour = settings['work_hours'].format(start)
                     exist = date in dates and hour in list(schedule[date].keys())  # 此时间段可能已有预约
                     schedule_new[date][hour] = schedule[date][hour] if exist else settings['max_capacity']
 
