@@ -1,9 +1,11 @@
 # Author: limuhan
 # GitHub: bugstop
+#   March 7, 2021
 
 import os
 import json
 import signal
+import inspect
 import requests
 from typing import Any, Callable
 from multiprocessing import Process
@@ -16,7 +18,7 @@ from email.mime.text import MIMEText
 from flask import *
 from flask_cors import CORS
 
-path: str = os.getcwd() + '/data/'
+path = os.path.dirname(inspect.getfile(inspect.currentframe())) + '/data/'
 
 with open(path + 'secrets.json') as f_obj:
     secrets = json.load(f_obj)
