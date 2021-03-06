@@ -1,9 +1,5 @@
 <view class="page" data-weui-theme="{{theme}}">
-<<<<<<< Updated upstream
-=======
 
-
->>>>>>> Stashed changes
   <view class="page__bd">
     <view class="empty" wx:if="{{tickets.length==0}}">
       <icon type="waiting" size="100" color="#666666" />
