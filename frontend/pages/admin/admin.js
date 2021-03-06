@@ -11,7 +11,7 @@ Page({
     activeIndex: 0,
     sliderOffset: 0,
     sliderLeft: 0,
-    inProgress: [],
+    reservations: [],
     tickets: [],
     dialogShow: false,
     dialogContent: [],
@@ -40,7 +40,7 @@ Page({
     })
     console.log(app.globalData.admin_password)
     wx.request({
-      url: 'https://www.bugstop.site/list/',
+      url: 'https://www.bugstop.site/plan/list/',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -55,7 +55,7 @@ Page({
         //将获取到的json数据，存在名字叫list的这个数组中
         if (res.data.statusCode == 200) {
           that.setData({
-            inProgress: res.data.inProgress,
+            reservations: res.data.reservations,
             tickets: res.data.tickets,
             //res代表success函数的事件对，data是固定的，list是数组
           })
@@ -170,7 +170,7 @@ Page({
         mask: true
       })
       wx.request({
-        url: 'https://www.bugstop.site/edit/',
+        url: 'https://www.bugstop.site/plan/edit/',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -231,7 +231,7 @@ Page({
       mask: true
     })
     wx.request({
-      url: 'https://www.bugstop.site/list/',
+      url: 'https://www.bugstop.site/plan/list/',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -246,7 +246,7 @@ Page({
         //将获取到的json数据，存在名字叫list的这个数组中
         if (res.data.statusCode == 200) {
           that.setData({
-            inProgress: res.data.inProgress,
+            reservations: res.data.reservations,
             tickets: res.data.tickets,
             //res代表success函数的事件对，data是固定的，list是数组
           })
@@ -300,7 +300,7 @@ Page({
         mask: true
       })
       wx.request({
-        url: 'https://www.bugstop.site/edit/',
+        url: 'https://www.bugstop.site/plan/edit/',
         headers: {
           'Content-Type': 'application/json'
         },

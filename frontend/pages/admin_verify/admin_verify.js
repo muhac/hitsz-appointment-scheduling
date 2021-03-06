@@ -101,7 +101,7 @@ Page({
         mask: true,
       });
       wx.request({
-        url: 'https://www.bugstop.site/verify/',
+        url: 'https://www.bugstop.site/user/verify/',
         headers: {
           'Content-Type': 'application/json'
         },

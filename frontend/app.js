@@ -14,7 +14,7 @@ App({
 
         
         wx.request({
-          url: 'https://www.bugstop.site/uid/',
+          url: 'https://www.bugstop.site/user/id/',
           headers: {
             'Content-Type': 'application/json'
           },
