@@ -161,7 +161,7 @@ def schedule_available():
         """筛选展示的时间段并排序"""
         global schedule, dynamic
 
-        time_format = date_convert(settings['time_format'], ('zh', 'en'))
+        time_format = date_convert(settings['date_format'], ('zh', 'en'))
         dates = sorted(list(schedule.keys()), key=lambda z: time_format(z))
 
         # 检测数据完整性：是否包含从当日起共[max_days]天
@@ -171,10 +171,10 @@ def schedule_available():
 
             schedule_new = {}
             for day in range(max_days):
-                date = date_lang(time_shift(days=day).strftime(settings['time_format']))
+                date = date_lang(time_shift(days=day).strftime(settings['date_format']))
                 schedule_new[date] = {}
                 for start in settings['work_start']:
-                    hour = settings['work_hours'].format(start)
+                    hour = settings['hour_format'].format(start)
                     exist = date in dates and hour in list(schedule[date].keys())  # 此时间段可能已有预约
                     schedule_new[date][hour] = schedule[date][hour] if exist else settings['max_capacity']
 
@@ -182,7 +182,7 @@ def schedule_available():
             Process(target=save_data, args=(schedule, 'schedules.json')).start()
 
         # 按照时间顺序排序
-        time_format = date_convert(settings['time_format'], ('zh', 'en'))
+        time_format = date_convert(settings['date_format'], ('zh', 'en'))
         date_show = sorted(list(schedule.keys()), key=lambda z: time_format(z))
         hour_show = sorted(list(schedule[date_show[0]].keys()), key=lambda z: int(z[:2]))
 
@@ -193,7 +193,7 @@ def schedule_available():
         schedule_show = {date: schedule[date] for date in date_show}
 
         # 将当日早些时候的余量设为0
-        time_format = date_convert(settings['sort_helper'], ('zh', 'en'))
+        time_format = date_convert(settings['time_format'], ('zh', 'en'))
         schedule_show[date_show[0]] = {hour: 0 if time_shift(hours=settings['hour_before']) > time_format(
             date_show[0] + hour) else schedule_show[date_show[0]][hour] for hour in hour_show}
 
@@ -229,7 +229,7 @@ def show_reservations():
         appointments_selected = appointments if tag != 'closed' else appointments_closed
 
         # 工单展示按预约时间顺序由近及远。工单ID仅作为唯一标识符，并不参与排序
-        time_format = date_convert(settings['sort_helper'], ('zh', 'en'))
+        time_format = date_convert(settings['time_format'], ('zh', 'en'))
         tickets = sorted(list(appointments_selected.keys()), key=lambda z: time_format(
             appointments_selected[z]['date'] + appointments_selected[z]['hour']), reverse=(tag == 'closed'))
 
