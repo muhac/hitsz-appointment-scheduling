@@ -17,14 +17,14 @@
 }
 
 .welcome {
-  margin:15rpx;
+  margin: 15rpx;
   color: #666;
-  font-size:14px;
+  font-size: 14px;
 }
 
 
 .banner {
-  margin-top:10px;
+  margin-top: 10px;
   width: 128px;
   height: 128px;
 }
@@ -38,19 +38,19 @@
 }
 
 .adminbutton {
-  margin:20px;
-  text-align:center;
-  font-size:14px;
-  text-decoration-line:underline;
+  margin: 20px;
+  text-align: center;
+  font-size: 14px;
+  text-decoration-line: underline;
   color: rgb(59, 151, 182);
 }
 
 .adminbuttonHover {
-  margin:20px;
-  text-align:center;
-  font-size:14px;
-  text-decoration-line:underline;
-  color:rgb(38, 95, 114);
+  margin: 20px;
+  text-align: center;
+  font-size: 14px;
+  text-decoration-line: underline;
+  color: rgb(38, 95, 114);
 
 }
 
@@ -62,4 +62,5 @@
   position: absolute;
   bottom: 30rpx;
 }
+
 @import 'index-wxa-auto-dark.wxss'

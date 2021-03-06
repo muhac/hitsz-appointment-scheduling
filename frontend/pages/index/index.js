@@ -10,9 +10,25 @@ Page({
     hasUserInfo: false,
     canIUse: wx.canIUse('button.open-type.getUserInfo'),
     code: [],
-    banner:1,
+    banner: 1,
   },
   // 事件处理函数
+  onLoad () {
+    var i = Math.ceil(Math.random() * 7)
+    this.setData({
+      banner: i
+    })
+  },
+  changebanner() {
+    var i = this.data.banner;
+    i = i + 1;
+    if (i > 7) {
+      i = 1;
+    }
+    this.setData({
+      banner: i
+    })
+  },
   bindViewTap() {
     wx.navigateTo({
       url: '../logs/logs'
@@ -28,25 +44,9 @@ Page({
       url: '../book2/book2'
     })
   },
-  gotomyBooks(){
+  gotomyBooks() {
     wx.navigateTo({
       url: '../mybooks/mybooks'
     })
   },
-  onLoad: function () {
-      var i=Math.ceil(Math.random()*7)
-      this.setData({
-        banner:i
-      })
-  },
-  changebanner(){
-    var i=this.data.banner;
-    i=i+1;
-    if(i>7){
-      i=1;
-    }
-    this.setData({
-      banner:i
-    })
-  }
 })
