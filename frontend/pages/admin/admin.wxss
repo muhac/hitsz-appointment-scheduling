@@ -12,6 +12,9 @@
   margin:20rpx;
   font-size: 20px;
   color: #666666;
+  position: relative; /*脱离文档流*/
+  margin-top: 45%; /*偏移*/
+
 }
 
 @import 'admin-wxa-auto-dark.wxss'
