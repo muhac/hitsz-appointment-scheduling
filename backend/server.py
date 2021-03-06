@@ -1,22 +1,38 @@
 # Author: limuhan
 # GitHub: bugstop
 
+import os
 import json
+import signal
 import requests
-from typing import Callable
+from typing import Any, Callable
+from multiprocessing import Process
 from datetime import datetime, timedelta
 
 from flask import *
 from flask_cors import CORS
 
-with open('data/secrets.json') as f_obj:
+path: str = os.getcwd() + '/data/'
+
+with open(path + 'secrets.json') as f_obj:
     secrets = json.load(f_obj)
-
-with open('data/settings.json') as f_obj:
+with open(path + 'settings.json') as f_obj:
     settings = json.load(f_obj)
-
-with open('data/schedules.json') as f_obj:
+with open(path + 'schedules.json') as f_obj:
     schedule = json.load(f_obj)
+with open(path + 'tickets.json') as f_obj:
+    appointments = json.load(f_obj)
+with open(path + 'dynamic.json') as f_obj:
+    dynamic = json.load(f_obj)
+
+
+def save_data(data: Any, filename: str) -> None:
+    print('update:', filename)
+    try:
+        with open(path + filename, 'w') as f:
+            json.dump(data, f)
+    except Exception as e:
+        print('save data error:', e)
 
 
 def date_lang(date: str, lang: (str, str) = ('en', 'zh')) -> str:
@@ -31,8 +47,8 @@ def date_convert(date_format: str, lang: (str, str) = ('en', 'zh')) -> Callable:
     return lambda z: datetime.strptime(date_lang(z, lang), date_format)
 
 
-def construct_response(msg: dict):
-    print(msg)
+def construct_response(msg: dict) -> Any:
+    print('response:', msg)
     response = make_response(jsonify(msg))
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Methods'] = 'OPTIONS,HEAD,GET,POST'
@@ -67,42 +83,37 @@ def admin_verification():
 
 
 @app.route("/reserve/", methods=['POST'])
-def reserve():
+def make_reservations():
     def check_data(data):
-        global schedule
-
-        with open('data/dynamic.json') as f:
-            dynamic = json.load(f)
+        global schedule, dynamic
 
         if not all([data.get(item) for item in settings['questionnaire']]) \
                 or schedule[data['date']][data['hour']] < 1 or data['wx'] in dynamic['blocked']:
-            print('check failed')
+            print('reserve: data check failed')
             raise RuntimeError
 
         schedule[data['date']][data['hour']] -= 1
-        with open('data/schedules.json', 'w') as f:
-            json.dump(schedule, f)
+        Process(target=save_data, args=(schedule, 'schedules.json')).start()
 
     def write_data(data):
-        with open('data/tickets.json') as f:
-            appointments = json.load(f)
+        global appointments
 
         tickets = sorted(list(appointments.keys()), key=lambda z: int(z.split('@')[0]))
         ticket_id = 1 if not tickets else int(tickets[-1].split('@')[0]) + 1
         new_ticket = settings['ticket_format'].format(ticket_id, datetime.now().strftime('%Y%m%d'))
 
+        data['status'] = 'open'
         data['timestamp'] = datetime.now().strftime(settings['timestamp'])
         appointments[new_ticket] = data
 
-        with open('data/tickets.json', 'w') as f:
-            json.dump(appointments, f)
+        print('reserve: write data')
+        Process(target=save_data, args=(appointments, 'tickets.json')).start()
 
     post = request.json
     messages = {"statusCode": 200}
 
     try:
         check_data(post)
-        print('write data')
         write_data(post)
     except Exception as e:
         print(e)
@@ -111,22 +122,56 @@ def reserve():
     return construct_response(messages)
 
 
+@app.route("/edit/", methods=['POST'])
+def edit_reservations():
+    def edit(username, ticket_id, operation):
+        global appointments, schedule
+
+        if appointments.get(ticket_id) and username in (appointments[ticket_id]['wx'], secrets['password']):
+            date, hour = appointments[ticket_id]['date'], appointments[ticket_id]['hour']
+            appointments[ticket_id]['status'] = operation
+            del appointments[ticket_id]  # TODO
+
+            print('edit: write data')
+            Process(target=save_data, args=(appointments, 'tickets.json')).start()
+
+            if operation == 'cancel':
+                try:
+                    schedule[date][hour] += 1
+                    Process(target=save_data, args=(schedule, 'schedules.json')).start()
+                except KeyError:
+                    pass
+        else:
+            print('edit: permission denied')
+
+    messages = {'statusCode': 200}
+
+    try:
+        user = request.json.get('user')
+        tid = request.json.get('tid')
+        op = request.json.get('op')
+        edit(user, tid, op)
+    except Exception as e:
+        print('edit error:', e)
+        messages = {'statusCode': 500}
+
+    return construct_response(messages)
+
+
 @app.route("/list/", methods=['POST'])
 def show_reservations():
     def get_data(user_filter: str = None):
-        with open('data/tickets.json') as f:
-            appointments = json.load(f)
+        global appointments
 
         time_format = date_convert(settings['sort_helper'], ('zh', 'en'))
         tickets = sorted(list(appointments.keys()),
                          key=lambda z: time_format(appointments[z]['date'] + appointments[z]['hour']))
 
         if user_filter != secrets['password']:
-            tickets_filtered = [ticket for ticket in tickets if appointments[ticket].get('wx') == user_filter]
-            appointments_filtered = {ticket: appointments[ticket] for ticket in tickets_filtered}
-            appointments, tickets = appointments_filtered, tickets_filtered
+            tickets = [ticket for ticket in tickets if appointments[ticket].get('wx') == user_filter]
 
-        return appointments, tickets
+        appointments_filtered = {ticket: appointments[ticket] for ticket in tickets}
+        return appointments_filtered, tickets
 
     messages = {'statusCode': 200}
 
@@ -145,7 +190,7 @@ def show_reservations():
 @app.route("/available/", methods=['GET'])
 def available():
     def get_data(max_days=10):
-        global schedule
+        global schedule, dynamic
 
         time_format = date_convert(settings['time_format'], ('zh', 'en'))
         dates = sorted(list(schedule.keys()), key=lambda z: time_format(z))
@@ -153,33 +198,26 @@ def available():
         if not dates or len(dates) != max_days or \
                 time_format(dates[0]) < datetime.now() - timedelta(days=1) or \
                 time_format(dates[-1]) < datetime.now() + timedelta(days=max_days - 2):
-            print('update schedule')
 
             schedule_new = {}
             for day in range(max_days):
-                d = date_lang((datetime.now() + timedelta(days=day)).strftime(settings['time_format']))
-                schedule_new[d] = {}
-                for hour in settings['work_start']:
-                    h = settings['work_hours'].format(hour, hour)
+                date = date_lang((datetime.now() + timedelta(days=day)).strftime(settings['time_format']))
+                schedule_new[date] = {}
+                for start in settings['work_start']:
+                    hour = settings['work_hours'].format(start, start)
+                    exist = date in dates and hour in list(schedule[date].keys())
+                    schedule_new[date][hour] = schedule[date][hour] if exist else settings['max_capacity']
 
-                    if d in dates and h in list(schedule[d].keys()):
-                        schedule_new[d][h] = schedule[d][h]
-                    else:
-                        schedule_new[d][h] = settings['max_capacity']
-
-            with open('data/schedules.json', 'w') as f:
-                json.dump(schedule_new, f)
             schedule = schedule_new
+            Process(target=save_data, args=(schedule, 'schedules.json')).start()
 
         time_format = date_convert(settings['time_format'], ('zh', 'en'))
         date_show = sorted(list(schedule.keys()), key=lambda z: time_format(z))
         hour_show = sorted(list(schedule[date_show[0]].keys()), key=lambda z: int(z[:2]))
 
-        with open('data/dynamic.json') as f:
-            dynamic = json.load(f)
-
         date_show = [date for date in date_show if not any(off_day in date for off_day in dynamic['off_days'])
-                     and any(work_day in date for work_day in settings['work_days'] + dynamic['work_days'])]
+                     and any(work_day in date for work_day in settings['work_days'] + dynamic['work_days'])
+                     and sum(schedule[date].values()) > 0]
         schedule_show = {date: schedule[date] for date in date_show}
 
         time_format = date_convert(settings['sort_helper'], ('zh', 'en'))
@@ -205,4 +243,6 @@ def available():
 
 
 if __name__ == '__main__':
+    print('working directory:', path)
+    signal.signal(signal.SIGCHLD, signal.SIG_IGN)
     app.run(port=2333)
