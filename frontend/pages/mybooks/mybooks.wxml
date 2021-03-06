@@ -59,7 +59,7 @@
         </view>
       </view>
       <view class="weui-form-preview__ft">
-      <view  bindtap="delonclick" data-value="{{tickets[index]}}" class="weui-form-preview__btn weui-form-preview__btn_default" hover-class="weui-form-preview__btn_active">{{activeIndex==0?"取消预约":"删除"}}</view>
+      <view  bindtap="delonclick" data-value="{{tickets[index]}}" class="weui-form-preview__btn weui-form-preview__btn_primary" hover-class="weui-form-preview__btn_active" wx:if="{{activeIndex==0}}">取消预约</view>
       </view>
     </view>
 
