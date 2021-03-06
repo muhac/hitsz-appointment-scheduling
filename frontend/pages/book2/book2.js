@@ -1,3 +1,5 @@
+const app = getApp()
+
 Page({
     data: {
         showTopTips: false,
@@ -17,6 +19,13 @@ Page({
         length: 0,
         formData: {},
         rules: [{
+                name: "wx",
+                rules: {
+                    required: true,
+                    message: "连接服务器失败，请稍候重试",
+                },
+            },
+            {
                 name: "name",
                 rules: {
                     required: true,
@@ -74,9 +83,8 @@ Page({
                 name: "detail",
                 rules: [{
                     required: true,
-                    minlength: 0,
-                    maxlength: 200,
-                    message: "困惑与希望得到的帮助请多于10字且少于140字",
+                    maxlength: 140,
+                    message: "输入的字数过多",
                 }, ],
             },
         ],
@@ -85,7 +93,8 @@ Page({
     onLoad: function (options) {
         var that = this;
         this.setData({
-            userInfo: 'test', // app.globalData.userInfo,
+            userInfo: undefined, // app.globalData.userInfo,
+            [`formData.wx`]: app.globalData.wx
         });
         wx.getStorage({
             key: "name",
@@ -273,8 +282,8 @@ Page({
                                 });
 
                                 setTimeout(function () {
-                                    wx.reLaunch({
-                                        url: "/pages/index/index",
+                                    wx.redirectTo({
+                                        url: "/pages/mybooks/mybooks",
                                     });
                                 }, 2000);
                                 break;

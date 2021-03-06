@@ -1,4 +1,4 @@
-/* pages/admin/admin.wxss */
+/* pages/mybooks/mybooks.wxss */
 
 .weui-form-preview {
   margin-bottom: 25px;
@@ -14,4 +14,5 @@
   color: #666666;
 }
 
-@import 'admin-wxa-auto-dark.wxss'
+
+@import 'mybooks-wxa-auto-dark.wxss'

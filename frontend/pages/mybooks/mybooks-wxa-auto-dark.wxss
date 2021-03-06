@@ -1,0 +1,13 @@
+/* 
+此文件为开发者工具生成，生成时间: 2021/3/6 下午2:08:58
+使用方法：
+在 mybooks.wxss 文件末尾引入样式
+```
+@import "./mybooks-wxa-auto-dark.wxss";
+```
+ */
+
+@media (prefers-color-scheme: dark) {
+    :root {
+    }
+}

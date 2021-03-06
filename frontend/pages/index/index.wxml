@@ -2,19 +2,18 @@
 
 <view class="container">
 
-  <view class="userinfo">
-    <block>
-      <image src="../../image/banner.png" class="banner" mode="cover"></image>
-    </block>
+  <image src="../../image/{{banner}}.png" class="banner" mode="heightFix"></image>
+
+  <view class="welcome">Have A Great Day!</view>
+
+  <view class="options">
+    <button class="weui-btn" type="primary" bindtap="gotoBook">预约咨询</button>
+    <button class="weui-btn" type="default" bindtap="gotomyBooks">我的预约</button>
+    <view class="adminbutton" hover-class="adminbuttonHover" hover-stay-time="40" bindtap="gotoAdmin">管理后台</view>
   </view>
 
-<view class="options">
-  <view class="button" hover-class="buttonHover" hover-stay-time="40" bindtap="gotoBook">预约咨询</view>
-  <view class="button" hover-class="buttonHover" hover-stay-time="40">我的预约</view>
-  <view class="button" hover-class="buttonHover" hover-stay-time="40" bindtap="gotoAdmin">管理中心</view>
-</view>
-
-  <view class="usermotto">
-    <view>© 2021 Yjh and Lmh</view><br/><view>请不要试 bug 哈哈哈</view>
+  <view class="weui-footer">
+    <view>© 2021 Yjh & Lmh</view><br />
+    <view>请不要试 bug 哈哈哈</view>
   </view>
 </view>
