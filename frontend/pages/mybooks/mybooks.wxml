@@ -1,9 +1,10 @@
 <view class="page" data-weui-theme="{{theme}}">
+
   <view class="page__bd">
-  <view class="empty" wx:if="{{tickets.length==0}}">
-  <icon type="waiting" size="100" color="#666666"/>
-  <view>空空如也</view>
-  </view>
+    <view class="empty" wx:if="{{tickets.length==0}}">
+      <icon type="waiting" size="100" color="#666666" />
+      <view>空空如也</view>
+    </view>
     <view class="weui-form-preview" wx:for="{{tickets}}" wx:key="index">
       <view class="weui-form-preview__hd">
         <view class="weui-form-preview__item">
@@ -46,16 +47,12 @@
           <view class="weui-form-preview__value">{{inProgress[tickets[index]].detail}}</view>
         </view>
       </view>
-      <!--<view class="weui-form-preview__ft">-->
-      <!--<view  bindtap="delonclick" data-value="{{tickets[index]}}" class="weui-form-preview__btn weui-form-preview__btn_default" hover-class="weui-form-preview__btn_active">删除</view>-->
-      <!-- <view bindtap="detailonclick" data-value="{{inProgress[tickets[index]].detail}}" class="weui-form-preview__btn weui-form-preview__btn_primary" hover-class="weui-form-preview__btn_active">详情</view>-->
-      <!--</view>-->
 
     </view>
 
   </view>
   <view class="weui-footer">
-      <view>Tips:过期的预约将会自动删除，请注意\n</view>
-      <text decode>&nbsp;</text>
-    </view>
+    <view>Tips:过期的预约将会自动删除，请注意\n</view>
+    <text decode>&nbsp;</text>
+  </view>
 </view>
