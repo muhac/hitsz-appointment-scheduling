@@ -39,4 +39,10 @@ Page({
         banner:i
       })
   },
+  changebanner(){
+    var i=Math.ceil(Math.random()*7)
+    this.setData({
+      banner:i
+    })
+  }
 })

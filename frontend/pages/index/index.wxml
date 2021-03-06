@@ -2,7 +2,7 @@
 
 <view class="container">
 
-  <image src="../../image/{{banner}}.png" class="banner" mode="heightFix"></image>
+  <image bindtap="changebanner" src="../../image/{{banner}}.png" class="banner" mode="heightFix"></image>
 
   <view class="welcome">Have A Great Day!</view>
 
