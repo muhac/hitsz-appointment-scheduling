@@ -15,16 +15,16 @@ with open('data/tickets_closed.json', 'w') as f:
 
 settings = {
     'teachers': ['应梦娴', '田薇', '梁羡飞', '李娜'],              # 辅导员列表
-    'time_format': '%Y 年 %m 月 %d 日 · %A',                     # 显示日期格式
+    'date_format': '%Y 年 %m 月 %d 日 · %A',                     # 显示日期格式
     'work_start': [9, 10, 11, 14, 15, 16],                      # 每场开始时间
-    'work_hours': '{:02d}:00 · 大约 30 分钟',                    # 每场持续时间
+    'hour_format': '{:02d}:00 · 大约 30 分钟',                    # 每场持续时间
+    'time_format': '%Y 年 %m 月 %d 日 · %A%H:00 · 大约 30 分钟',   # 拼接时间格式
     'work_days': ['周一', '周二', '周三', '周四', '周五'],          # 一般工作日
     'max_capacity': 1,                                          # 每个时间段最大预约人数
     'max_days': 14,                                             # 最远可预约天数
     'hour_before': 1,                                           # 至少提前预约小时数
     'ticket_format': '{:05d}@{}',                               # 工单ID格式
     'timestamp': '%Y-%m-%d %H:%M:%S',                           # 工单时间戳格式
-    'sort_helper': '%Y 年 %m 月 %d 日 · %A%H:00 · 大约 30 分钟',   # 辅助排序的时间戳格式
     'must_fill': ['wx', 'id', 'name', 'sex', 'mobile', 'teacher', 'date', 'hour', 'detail'],  # 必填项
     'emails': {                                                 # 辅导员邮箱
         '应梦娴': '916720619@qq.com',
