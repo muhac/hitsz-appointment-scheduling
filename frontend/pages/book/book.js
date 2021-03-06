@@ -138,7 +138,7 @@ Page({
             },
         });
         wx.request({
-            url: "https://www.bugstop.site/available/",
+            url: "https://www.bugstop.site/plan/empty/",
             headers: {
                 "Content-Type": "application/json",
             },
@@ -263,7 +263,7 @@ Page({
                 });
                 console.log("submit:", formdata);
                 wx.request({
-                    url: "https://www.bugstop.site/reserve/",
+                    url: "https://www.bugstop.site/plan/new/",
                     data: formdata,
                     headers: {
                         "Content-Type": "application/json",

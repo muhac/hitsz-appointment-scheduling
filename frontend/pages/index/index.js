@@ -13,7 +13,7 @@ Page({
     banner: 1,
   },
   // 事件处理函数
-  onLoad () {
+  onLoad() {
     var i = Math.ceil(Math.random() * 7)
     this.setData({
       banner: i
@@ -41,7 +41,7 @@ Page({
   },
   gotoBook() {
     wx.navigateTo({
-      url: '../book2/book2'
+      url: '../book/book'
     })
   },
   gotomyBooks() {
