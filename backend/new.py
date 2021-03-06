@@ -20,7 +20,7 @@ settings = {
     'max_days': 14,  # 最远可预约天数
     'hour_before': 1,  # 至少提前预约小时数
     'ticket_format': '{:05d}@{}',  # 工单ID格式
-    'timestamp': '%Y 年 %m 月 %d 日 %H 时 %M 分 %S 秒',  # 工单时间戳格式
+    'timestamp': '%Y-%m-%d %H:%M:%S',  # 工单时间戳格式
     'sort_helper': '%Y 年 %m 月 %d 日 ・ %A%H:00 ~ %M:30',  # 辅助排序的时间戳格式
     'questionnaire': ['wx', 'id', 'name', 'sex', 'mobile', 'teacher', 'date', 'hour', 'detail'],  # 必填项
     'languages': {  # 时间戳翻译
@@ -33,7 +33,7 @@ with open('data/settings.json', 'w') as f:
     json.dump(settings, f)
 
 dynamic = {
-    'work_days': ['2021 年 03 月 06 日', '2021 年 03 月 13 日', ],  # 特殊工作日
+    'work_days': ['2021 年 03 月 13 日', ],  # 特殊工作日
     'off_days': ['2021 年 03 月 12 日', ],  # 特殊休息日
     'blocked': []  # 封禁用户名单
 }
