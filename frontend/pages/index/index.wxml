@@ -12,7 +12,7 @@
     <view class="adminbutton" hover-class="adminbuttonHover" hover-stay-time="40" bindtap="gotoAdmin">管理后台</view>
   </view>
 
-  <view class="weui-footer">
+  <view class="weui-footer footer">
     <view>© 2021 Yjh & Lmh</view><br />
     <view>请不要试 bug 哈哈哈</view>
   </view>
