@@ -54,10 +54,10 @@ def send_mail(receiver: str, title: str, content: str) -> None:
         smtp.ehlo(server)
         smtp.login(username, password)
 
-        msg = MIMEText(content, "plain", 'utf-8')
-        msg["Subject"] = Header(title, 'utf-8')
-        msg["From"] = username
-        msg["To"] = receiver
+        msg = MIMEText(content, 'plain', 'utf-8')
+        msg['Subject'] = Header(title, 'utf-8')
+        msg['From'] = username
+        msg['To'] = receiver
 
         smtp.sendmail(username, receiver, msg.as_string())
         smtp.quit()
@@ -96,8 +96,7 @@ def save_data(data: Any, filename: str) -> None:
 
 
 def construct_response(msg: dict) -> Any:
-    """响应请求构建"""
-    # print('response:', msg)
+    """完成请求响应的构造"""
     response = make_response(jsonify(msg))
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Methods'] = 'OPTIONS,HEAD,GET,POST'
@@ -109,14 +108,14 @@ app = Flask(__name__, )
 CORS(app, resources=r'/*')  # 允许跨域请求
 
 
-@app.route("/", methods=['GET'])
+@app.route('/', methods=['GET'])
 def index():
     """https://github.com/bugstop/hitsz-appointment-scheduling"""
-    messages = {"statusCode": 200, 'GitHub': 'bugstop', 'copyright': 2021}
+    messages = {'statusCode': 200, 'GitHub': 'bugstop', 'copyright': 2021}
     return construct_response(messages)
 
 
-@app.route("/user/id/", methods=['POST'])
+@app.route('/user/id/', methods=['POST'])
 def get_uid():
     """获得用户唯一微信ID"""
     code = request.json.get('code')
@@ -134,19 +133,20 @@ def get_uid():
     else:
         user_id = None  # 超时
 
-    messages = {"statusCode": 200 if user_id else 500, 'wx': user_id}
+    messages = {'statusCode': 200 if user_id else 500, 'wx': user_id}
+    print('user id:', messages)
     return construct_response(messages)
 
 
-@app.route("/user/verify/", methods=['POST'])
+@app.route('/user/verify/', methods=['POST'])
 def admin_verification():
     """验证管理员密码"""
     admin = secrets['password'] == request.json.get('password')
-    messages = {"statusCode": 200 if admin else 500}
+    messages = {'statusCode': 200 if admin else 500}
     return construct_response(messages)
 
 
-@app.route("/plan/empty/", methods=['GET'])
+@app.route('/plan/empty/', methods=['GET'])
 def schedule_available():
     """展示可供预约的时间段"""
 
@@ -192,14 +192,15 @@ def schedule_available():
 
         return schedule_show, date_show, hour_show
 
-    messages = {"statusCode": 200}
-
     try:
-        data = list_data(settings['max_days'])
-        messages['date'] = data[1]
-        messages['hour'] = data[2]
-        messages['schedule'] = data[0]
-        messages['teachers'] = settings['teachers']
+        available = list_data(settings['max_days'])
+        messages = {
+            'statusCode': 200,
+            'date': available[1],
+            'hour': available[2],
+            'schedule': available[0],
+            'teachers': settings['teachers']
+        }
     except Exception as e:
         print('list schedule error:', e)
         messages = {'statusCode': 500, 'error': e}
@@ -207,7 +208,7 @@ def schedule_available():
     return construct_response(messages)
 
 
-@app.route("/plan/list/", methods=['POST'])
+@app.route('/plan/list/', methods=['POST'])
 def show_reservations():
     """展示预约工单列表"""
 
@@ -232,14 +233,15 @@ def show_reservations():
 
         return appointments_filtered, tickets
 
-    messages = {'statusCode': 200}
-
     try:
         username = request.json.get('user')
         ticket_status = request.json.get('tag')
         reservations = list_data(username, ticket_status)
-        messages['tickets'] = reservations[1]
-        messages['reservations'] = reservations[0]
+        messages = {
+            'statusCode': 200,
+            'tickets': reservations[1],
+            'reservations': reservations[0]
+        }
     except Exception as e:
         print('list reservation error:', e)
         messages = {'statusCode': 500, 'error': e}
@@ -247,7 +249,7 @@ def show_reservations():
     return construct_response(messages)
 
 
-@app.route("/plan/new/", methods=['POST'])
+@app.route('/plan/new/', methods=['POST'])
 def make_reservations():
     """预约心理咨询"""
 
@@ -277,14 +279,13 @@ def make_reservations():
         Process(target=save_data, args=(appointments, 'tickets.json')).start()
 
         mail_content = '{}老师，{}（{}）预约了 {} ・ {} 的心理咨询。'.format(
-            ticket["teacher"], ticket['name'], ticket['mobile'], ticket['date'], ticket['hour'])
+            ticket['teacher'], ticket['name'], ticket['mobile'], ticket['date'], ticket['hour'])
         Process(target=send_mail, args=('limuhan@live.com', '新的心理咨询预约', mail_content)).start()
-        # TODO: 测试完成后将收件人改为 settings['emails'][ticket["teacher"]]
-
-    messages = {"statusCode": 200}
+        # TODO: 测试完成后将收件人改为 settings['emails'][ticket['teacher']]
 
     try:
         write_data(request.json)
+        messages = {'statusCode': 200}
     except Exception as e:
         print('make reservation error:', e)
         messages = {'statusCode': 500, 'error': e}
@@ -292,7 +293,7 @@ def make_reservations():
     return construct_response(messages)
 
 
-@app.route("/plan/edit/", methods=['POST'])
+@app.route('/plan/edit/', methods=['POST'])
 def edit_reservations():
     """更改心理咨询预约工单的状态"""
 
@@ -323,13 +324,6 @@ def edit_reservations():
 
         # 对已完成的工单，只有管理员有权限删除
         elif operation == 'cancel' and appointments_closed.get(ticket_id) and username == secrets['password']:
-            date, hour = appointments_closed[ticket_id]['date'], appointments_closed[ticket_id]['hour']
-            appointments_closed[ticket_id]['status'] = operation
-
-            if date in schedule and hour in schedule[date]:
-                schedule[date][hour] += 1
-                Process(target=save_data, args=(schedule, 'schedules.json')).start()
-
             print('edit: write data')
             del appointments_closed[ticket_id]
             Process(target=save_data, args=(appointments_closed, 'tickets.json')).start()
@@ -337,13 +331,12 @@ def edit_reservations():
         else:
             raise DataCheckException('permission denied')
 
-    messages = {'statusCode': 200}
-
     try:
         uid = request.json.get('user')  # 用户的唯一ID，管理员传密码
         tid = request.json.get('tid')   # 操作的工单ID
         op = request.json.get('op')     # 操作选项（closed，cancel）
         edit_data(uid, tid, op)
+        messages = {'statusCode': 200}
     except Exception as e:
         print('edit reservation error:', e)
         messages = {'statusCode': 500, 'error': e}
