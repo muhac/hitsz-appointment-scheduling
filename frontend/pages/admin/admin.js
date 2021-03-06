@@ -146,7 +146,6 @@ Page({
       dialogShow: true,
       ticket_chosen: e.currentTarget.dataset.value
     })
-
   },
 
   delonclick: function (e) {
@@ -155,7 +154,6 @@ Page({
       dialogShow_del: true,
       ticket_chosen: e.currentTarget.dataset.value
     })
-
   },
 
   tapDialogButton: function (e) {
@@ -215,15 +213,12 @@ Page({
     }
   },
 
-
   tabClick: function (e) {
     var activeIndex = e.currentTarget.id;
     var that = this;
     var tag = activeIndex == 0 ? "open" : "closed";
 
     console.log(activeIndex)
-
-
     console.log(tag)
 
     wx.showLoading({

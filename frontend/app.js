@@ -1,18 +1,17 @@
 // app.js
 App({
   onLaunch() {
-    var that=this
+    var that = this
     wx.showLoading({
       title: "登陆中",
       mask: true,
-  });
+    });
     // 登录
     wx.login({
-      
-      success: res => {
-         // 发送 res.code 到后台换取 openId, sessionKey, unionId
 
-        
+      success: res => {
+        // 发送 res.code 到后台换取 openId, sessionKey, unionId
+
         wx.request({
           url: 'https://www.bugstop.site/user/id/',
           headers: {
@@ -23,28 +22,27 @@ App({
           timeout: 10000,
           success(res) {
             console.log(res.data)
-            if(res.statusCode==200){
+            if (res.statusCode == 200) {
               wx.hideLoading();
               that.globalData.wx = res.data.wx
-            }
-            else{
+            } else {
               wx.hideLoading();
               wx.showToast({
                 title: "登录失败",
                 icon: 'error', //如果要纯文本，不要icon，将值设为'none'
                 mask: true,
                 duration: 3000
-            })
+              })
             }
           },
-          fail(){
+          fail() {
             wx.hideLoading();
             wx.showToast({
               title: "连接超时",
               icon: 'error', //如果要纯文本，不要icon，将值设为'none'
               mask: true,
               duration: 3000
-          })
+            })
           }
         })
       }
@@ -72,7 +70,7 @@ App({
   },
   globalData: {
     userInfo: null,
-    wx:null,
-    admin_password:null
+    wx: null,
+    admin_password: null
   }
 })
