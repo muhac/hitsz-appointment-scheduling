@@ -3,15 +3,15 @@
   <mp-toptips msg="{{error}}" type="error" show="{{error}}"></mp-toptips>
 
   <mp-form-page title="管理后台" subtitle="需要验证您的身份">
-      <mp-cells>
-        <mp-cell prop="password" title="管理密码" ext-class="">
-          <input class="weui-input" password focus type="text" placeholder="请输入管理密码" confirm-type="done" bindinput="formInputChange" value="{{password}}"/>
-        </mp-cell>
-      </mp-cells>
+    <mp-cells>
+      <mp-cell prop="password" title="管理密码" ext-class="">
+        <input class="weui-input" password focus type="text" placeholder="请输入管理密码" confirm-type="done"
+          bindinput="formInputChange" value="{{password}}" />
+      </mp-cell>
+    </mp-cells>
 
     <view slot="button">
-            <button class="weui-btn" type="primary" bindtap="login">登录</button>
-        </view>
-    </mp-form-page>
+      <button class="weui-btn" type="primary" bindtap="login">登录</button>
+    </view>
+  </mp-form-page>
 </view>
-

@@ -19,14 +19,13 @@
 .welcome {
   margin: 15rpx;
   color: #666;
-  font-size: 14px;
+  font-size: 28rpx;
 }
 
-
 .banner {
-  margin-top: 10px;
-  width: 128px;
-  height: 128px;
+  margin-top: 20rpx;
+  width: 256rpx;
+  height: 256rpx;
 }
 
 .usermotto {
@@ -34,24 +33,20 @@
   bottom: 10rpx;
   text-align: center;
   color: #666666;
-  font-size: 12px;
+  font-size: 24rpx;
 }
 
 .adminbutton {
-  margin: 20px;
+  margin: 70rpx;
   text-align: center;
-  font-size: 14px;
-  text-decoration-line: underline;
+  font-size: 28rpx;
+  /* text-decoration-line: underline; */
   color: rgb(59, 151, 182);
 }
 
 .adminbuttonHover {
-  margin: 20px;
-  text-align: center;
-  font-size: 14px;
   text-decoration-line: underline;
   color: rgb(38, 95, 114);
-
 }
 
 .options {
@@ -61,6 +56,10 @@
 .footer {
   position: absolute;
   bottom: 30rpx;
+}
+
+.sep {
+  padding: 2rpx;
 }
 
 @import 'index-wxa-auto-dark.wxss'

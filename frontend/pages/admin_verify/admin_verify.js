@@ -1,7 +1,7 @@
 // pages/admin_verify/admin_verify.js
 
 var md5 = require("md5.js")
-const app=getApp()
+const app = getApp()
 Page({
 
   /**
@@ -90,7 +90,7 @@ Page({
   },
 
   login() {
-    var that=this
+    var that = this
     if (this.data.password == "") {
       this.setData({
         error: "请输入密码"
@@ -124,7 +124,7 @@ Page({
             })
           }
         },
-        fail(){
+        fail() {
           wx.hideLoading();
           that.setData({
             error: "登录超时，请稍候重试",
@@ -133,5 +133,4 @@ Page({
       })
     }
   }
-
 })

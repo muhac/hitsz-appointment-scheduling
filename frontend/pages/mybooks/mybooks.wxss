@@ -1,7 +1,7 @@
 /* pages/mybooks/mybooks.wxss */
 
 .weui-form-preview {
-  margin-bottom: 25px;
+  margin-bottom: 50rpx;
 }
 
 .empty {
@@ -10,7 +10,7 @@
   align-items: center;
   margin-top: 100rpx;
   margin: 20rpx;
-  font-size: 20px;
+  font-size: 40rpx;
   color: #666666;
   position: relative;
   /*脱离文档流*/
@@ -20,7 +20,7 @@
 }
 
 .weui-tab__content {
-  padding-top: 60px;
+  padding-top: 120rpx;
   text-align: center;
 }
 
@@ -32,6 +32,7 @@
 .weui-navbar {
   background: linear-gradient(180deg, #fcfcfc, #f9f9f9);
 }
+
 .weui-navbar__item {
   margin: 0rpx 50rpx 15rpx 50rpx;
   padding: 20rpx !important;
@@ -44,9 +45,9 @@
 
 .weui-bar__item_on {
   border-radius: 15rpx;
-background: linear-gradient(145deg, #ffffff, #fafafa);
-box-shadow:  3rpx 3rpx 6rpx #d9d9d9,
-             -3rpx -3rpx 6rpx #ffffff;
+  background: linear-gradient(145deg, #ffffff, #fafafa);
+  box-shadow: 3rpx 3rpx 6rpx #d9d9d9,
+    -3rpx -3rpx 6rpx #ffffff;
 }
 
 .weui-navbar__item::after {
