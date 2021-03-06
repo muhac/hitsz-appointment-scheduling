@@ -3,3 +3,5 @@
 .weui-agree .weui-agree__text {
   display: inline;
 }
+
+@import 'book2-wxa-auto-dark.wxss'

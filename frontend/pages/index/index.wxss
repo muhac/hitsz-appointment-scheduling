@@ -16,37 +16,46 @@
   color: #aaa;
 }
 
+.welcome {
+  margin:15rpx;
+  color: #666;
+  font-size:14px;
+}
+
+
 .banner {
-  width: 300px;
-  height: 150px;
+  margin-top:10px;
+  width: 128px;
+  height: 128px;
 }
 
 .usermotto {
   position: absolute;
   bottom: 10rpx;
   text-align: center;
+  color: #666666;
+  font-size: 12px;
 }
 
-.button {
-  margin: 50rpx;
-  padding: 20rpx 50rpx;
-  border-style: solid;
-  border-width: 1rpx;
-  border-color: #aaa;
-  border-radius: 20rpx;
+.adminbutton {
+  margin:20px;
+  text-align:center;
+  font-size:14px;
+  text-decoration-line:underline;
+  color: rgb(59, 151, 182);
 }
 
-.buttonHover {
-  margin: 50rpx;
-  padding: 20rpx 50rpx;
-  border-style: solid;
-  border-width: 1rpx;
-  border-color: #aaa;
-  background: lightblue;
-  color: white;
-  border-radius: 20rpx;
+.adminbuttonHover {
+  margin:20px;
+  text-align:center;
+  font-size:14px;
+  text-decoration-line:underline;
+  color:rgb(38, 95, 114);
+
 }
 
 .options {
-  margin-top: 100rpx;
+  margin-top: 80rpx;
 }
+
+@import 'index-wxa-auto-dark.wxss'

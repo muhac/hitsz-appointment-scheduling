@@ -1,15 +1,16 @@
 {
   "pages":[
     "pages/index/index",
-    "pages/book/book",
-    "pages/admin/admin",
+    "pages/mybooks/mybooks",
     "pages/admin_verify/admin_verify",
-    "pages/logs/logs"
+    "pages/book2/book2",
+    "pages/admin/admin"
+
   ],
   "window":{
     "backgroundTextStyle":"light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "心理咨询预约",
+    "navigationBarTitleText": "电信学院心理咨询预约",
     "navigationBarTextStyle":"black",
     "enablePullDownRefresh": false
   },
