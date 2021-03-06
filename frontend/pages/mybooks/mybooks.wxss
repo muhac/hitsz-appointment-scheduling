@@ -10,7 +10,7 @@
   align-items: center;
   margin-top: 100rpx;
   margin: 20rpx;
-  font-size: 40rpx;
+  font-size: 30rpx;
   color: #666666;
   position: relative;
   /*脱离文档流*/
