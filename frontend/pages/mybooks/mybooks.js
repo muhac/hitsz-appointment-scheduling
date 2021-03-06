@@ -24,13 +24,12 @@ Page({
       title: "获取数据中",
       mask: true
   })
-  console.log(app.globalData.admin_password)
     wx.request({
       url: 'https://www.bugstop.site/list/',
       headers: {
           'Content-Type': 'application/json'
       },
-      data:{user:app.globalData.admin_password},
+      data:{user:app.globalData.wx},
       method:"POST",
       success(res) {
         console.log(res.data)

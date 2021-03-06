@@ -1,9 +1,9 @@
 <view class="page" data-weui-theme="{{theme}}">
   <mp-toptips msg="{{error}}" type="error" show="{{error}}"></mp-toptips>
 
-  <mp-form-page title="心理咨询预约" subtitle="信息楼 · L1103">
+  <mp-form-page title="电信学院心理咨询预约" subtitle="信息楼 · L1103">
     <mp-form id="form" rules="{{rules}}" models="{{formData}}">
-      <mp-cells title="基本信息" footer="辅导员将负责对你进行心理辅导">
+      <mp-cells title="基本信息" footer="辅导员为您预约的心理咨询师，将为您进行心理咨询">
         <mp-cell prop="name" title="姓名" ext-class="">
           <input bindinput="formInputChange" data-field="name" class="weui-input" placeholder="请输入姓名"
             value="{{formData.name}}" />
@@ -54,7 +54,7 @@
 
       <mp-cells title="请简述目前遇到的困难和希望得到的帮助">
         <mp-cell has-header="{{false}}" has-footer="{{false}}" title="" ext-class="">
-          <textarea date-field="detail" class="weui-textarea" placeholder="请输入文本（不少于10字且不多于140字）" style="height: 5em"
+          <textarea date-field="detail" class="weui-textarea" placeholder="请输入文本（不多于140字）" style="height: 5em"
             bindinput="textareaInput" />
           <view class="weui-textarea-counter">{{length}}/140</view>
                 </mp-cell>

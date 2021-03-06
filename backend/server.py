@@ -3,6 +3,7 @@
 
 import json
 import requests
+from typing import Callable
 from datetime import datetime, timedelta
 
 from flask import *
@@ -14,15 +15,24 @@ with open('data/secrets.json') as f_obj:
 with open('data/settings.json') as f_obj:
     settings = json.load(f_obj)
 
+with open('data/schedules.json') as f_obj:
+    schedule = json.load(f_obj)
+
 
 def date_lang(date: str, lang: (str, str) = ('en', 'zh')) -> str:
     languages = settings['languages']
-    for i in range(len(languages['en'])):
-        date = date.replace(languages[lang[0]][i], languages[lang[1]][i])
+    source_dict, target_dict = languages[lang[0]], languages[lang[1]]
+    for source_word, target_word in zip(source_dict, target_dict):
+        date = date.replace(source_word, target_word)
     return date
 
 
-def construct_response(msg):
+def date_convert(date_format: str, lang: (str, str) = ('en', 'zh')) -> Callable:
+    return lambda z: datetime.strptime(date_lang(z, lang), date_format)
+
+
+def construct_response(msg: dict):
+    print(msg)
     response = make_response(jsonify(msg))
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Methods'] = 'OPTIONS,HEAD,GET,POST'
@@ -46,51 +56,48 @@ def get_uid():
     url = 'https://api.weixin.qq.com/sns/jscode2session?' \
           'appid={}&secret={}&js_code={}&grant_type=authorization_code'
     rc = requests.get(url.format(secrets['AppID'], secrets['AppSecret'], code))
-    print(rc.json())
     messages = {"statusCode": 200, 'wx': rc.json().get('openid')}
     return construct_response(messages)
 
 
 @app.route("/verify/", methods=['POST'])
 def admin_verification():
-    messages = {"statusCode": 200 if settings['password'] == request.json.get('password') else 500}
+    messages = {"statusCode": 200 if secrets['password'] == request.json.get('password') else 500}
     return construct_response(messages)
 
 
 @app.route("/reserve/", methods=['POST'])
 def reserve():
     def check_data(data):
+        global schedule
+
         with open('data/dynamic.json') as f:
             dynamic = json.load(f)
-        with open('data/available.json') as f:
-            schedule = json.load(f)
 
-        if not all([data.get('wx'), data.get('name'), data.get('sex'), data.get('id'), data.get('mobile'),
-                    data.get('teacher'), data.get('date'), data.get('hour'), data.get('detail')]) \
+        if not all([data.get(item) for item in settings['questionnaire']]) \
                 or schedule[data['date']][data['hour']] < 1 or data['wx'] in dynamic['blocked']:
             print('check failed')
             raise RuntimeError
 
         schedule[data['date']][data['hour']] -= 1
-        with open('data/available.json', 'w') as f:
+        with open('data/schedules.json', 'w') as f:
             json.dump(schedule, f)
 
     def write_data(data):
-        with open('data/in_progress.json') as f:
+        with open('data/tickets.json') as f:
             appointments = json.load(f)
 
         tickets = sorted(list(appointments.keys()), key=lambda z: int(z.split('@')[0]))
         ticket_id = 1 if not tickets else int(tickets[-1].split('@')[0]) + 1
-        new_ticket = settings['ticket_format'].format(ticket_id, datetime.now().strftime('%Y%m%d%M%S'))
+        new_ticket = settings['ticket_format'].format(ticket_id, datetime.now().strftime('%Y%m%d'))
 
         data['timestamp'] = datetime.now().strftime(settings['timestamp'])
         appointments[new_ticket] = data
 
-        with open('data/in_progress.json', 'w') as f:
+        with open('data/tickets.json', 'w') as f:
             json.dump(appointments, f)
 
     post = request.json
-    print(post)
     messages = {"statusCode": 200}
 
     try:
@@ -105,16 +112,16 @@ def reserve():
 
 
 @app.route("/list/", methods=['POST'])
-def in_progress():
+def show_reservations():
     def get_data(user_filter: str = None):
-        with open('data/in_progress.json') as f:
+        with open('data/tickets.json') as f:
             appointments = json.load(f)
 
-        time_format = lambda z: datetime.strptime(date_lang(z, ('zh', 'en')), settings['sort_helper'])
+        time_format = date_convert(settings['sort_helper'], ('zh', 'en'))
         tickets = sorted(list(appointments.keys()),
                          key=lambda z: time_format(appointments[z]['date'] + appointments[z]['hour']))
 
-        if user_filter != settings['password']:
+        if user_filter != secrets['password']:
             tickets_filtered = [ticket for ticket in tickets if appointments[ticket].get('wx') == user_filter]
             appointments_filtered = {ticket: appointments[ticket] for ticket in tickets_filtered}
             appointments, tickets = appointments_filtered, tickets_filtered
@@ -138,17 +145,14 @@ def in_progress():
 @app.route("/available/", methods=['GET'])
 def available():
     def get_data(max_days=10):
-        with open('data/available.json') as f:
-            schedule = json.load(f)
+        global schedule
 
-        dates = [date_lang(key, ('zh', 'en')) for key in list(schedule.keys())]
-        dates.sort(key=lambda z: datetime.strptime(z, settings['time_format']))
+        time_format = date_convert(settings['time_format'], ('zh', 'en'))
+        dates = sorted(list(schedule.keys()), key=lambda z: time_format(z))
 
         if not dates or len(dates) != max_days or \
-                datetime.strptime(dates[0], settings['time_format']) < \
-                datetime.now() - timedelta(days=1) or \
-                datetime.strptime(dates[-1], settings['time_format']) < \
-                datetime.now() + timedelta(days=max_days - 2):
+                time_format(dates[0]) < datetime.now() - timedelta(days=1) or \
+                time_format(dates[-1]) < datetime.now() + timedelta(days=max_days - 2):
             print('update schedule')
 
             schedule_new = {}
@@ -163,26 +167,27 @@ def available():
                     else:
                         schedule_new[d][h] = settings['max_capacity']
 
-            with open('data/available.json', 'w') as f:
+            with open('data/schedules.json', 'w') as f:
                 json.dump(schedule_new, f)
             schedule = schedule_new
 
-        date = sorted(list(schedule.keys()), key=lambda z: datetime.strptime(
-            date_lang(z, ('zh', 'en')), settings['time_format']))
-        hour = sorted(list(schedule[list(schedule.keys())[0]].keys()), key=lambda z: int(z[:2]))
+        time_format = date_convert(settings['time_format'], ('zh', 'en'))
+        date_show = sorted(list(schedule.keys()), key=lambda z: time_format(z))
+        hour_show = sorted(list(schedule[date_show[0]].keys()), key=lambda z: int(z[:2]))
 
         with open('data/dynamic.json') as f:
             dynamic = json.load(f)
 
-        date = [d for d in date if not any(off_day in d for off_day in dynamic['off_days'])
-                and any(work_day in d for work_day in settings['work_days'] + dynamic['work_days'])]
-        schedule = {d: schedule[d] for d in date}
+        date_show = [date for date in date_show if not any(off_day in date for off_day in dynamic['off_days'])
+                     and any(work_day in date for work_day in settings['work_days'] + dynamic['work_days'])]
+        schedule_show = {date: schedule[date] for date in date_show}
 
-        time_format = lambda z: datetime.strptime(date_lang(z, ('zh', 'en')), settings['sort_helper'])
-        schedule[date[0]] = {h: 0 if datetime.now() + timedelta(hours=settings['hour_before']) >
-                                     time_format(date[0] + h) else schedule[date[0]][h] for h in hour}
+        time_format = date_convert(settings['sort_helper'], ('zh', 'en'))
+        ddl = datetime.now() + timedelta(hours=settings['hour_before'])
+        schedule_show[date_show[0]] = {hour: 0 if ddl > time_format(date_show[0] + hour) else
+                                             schedule_show[date_show[0]][hour] for hour in hour_show}
 
-        return schedule, date, hour
+        return schedule_show, date_show, hour_show
 
     messages = {"statusCode": 200}
 
