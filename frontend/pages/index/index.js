@@ -41,7 +41,7 @@ Page({
   },
   gotoBook() {
     wx.navigateTo({
-      url: '../book2/book2'
+      url: '../book/book'
     })
   },
   gotomyBooks() {

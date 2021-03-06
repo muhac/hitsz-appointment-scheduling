@@ -1,4 +1,4 @@
-/* pages/book2/book2.wxss */
+/* pages/book/book.wxss */
 
 .weui-agree .weui-agree__text {
   display: inline;
@@ -8,4 +8,4 @@
   margin-bottom: 0;
 }
 
-@import 'book2-wxa-auto-dark.wxss'
+@import 'book-wxa-auto-dark.wxss'

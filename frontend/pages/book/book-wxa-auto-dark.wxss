@@ -1,9 +1,9 @@
 /* 
 此文件为开发者工具生成，生成时间: 2021/3/6 上午12:18:25
 使用方法：
-在 book2.wxss 文件末尾引入样式
+在 book.wxss 文件末尾引入样式
 ```
-@import "./book2-wxa-auto-dark.wxss";
+@import "./book-wxa-auto-dark.wxss";
 ```
  */
 
