@@ -2,13 +2,13 @@
 # GitHub: bugstop
 #   March 7, 2021
 
-# TODO: logs
 # TODO: statusCode
 
 import os
 import json
 import signal
 import inspect
+import logging
 import requests
 from typing import Any, Callable
 from multiprocessing import Process
@@ -18,11 +18,15 @@ from smtplib import SMTP_SSL
 from email.header import Header
 from email.mime.text import MIMEText
 
-from flask import *
+from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 
-# 获取当前工作路径
+
 path = os.path.dirname(inspect.getfile(inspect.currentframe())) + '/data/'
+
+log_file = path + 'server.log'
+log_format = "%(asctime)s - %(levelname)s - %(message)s"
+logging.basicConfig(filename=log_file, level=logging.DEBUG, format=log_format)
 
 with open(path + 'secrets.json') as f_obj:
     secrets: dict = json.load(f_obj)              # 储存敏感信息
@@ -36,6 +40,9 @@ with open(path + 'tickets_closed.json') as f_obj:
     appointments_closed: dict = json.load(f_obj)  # 储存已完成预约
 with open(path + 'dynamic.json') as f_obj:
     dynamic: dict = json.load(f_obj)              # 储存动态规则
+
+logging.info(('Loaded data', settings, schedule,
+              appointments, appointments_closed, dynamic))
 
 
 class DataCheckException(Exception):
@@ -62,7 +69,7 @@ def send_mail(receiver: str, title: str, content: str) -> None:
         smtp.sendmail(username, receiver, msg.as_string())
         smtp.quit()
     except Exception as e:
-        print('send mail error:', e)
+        logging.error(('send mail error:', e))
 
 
 def time_shift(*args: Any, **kwargs: Any) -> datetime:
@@ -86,13 +93,13 @@ def date_convert(date_format: str, lang: (str, str) = ('en', 'zh')) -> Callable:
 
 def save_data(data: Any, filename: str) -> None:
     """备份数据（没有数据库，只有json）"""
-    print('update:', filename)
+    logging.warning(('update:', filename))
     try:
         with open(path + filename, 'w') as f:
             json.dump(data, f)
     except Exception as e:
         # 仅作为备份，实时数据全在内存，少量失败问题不大（？）
-        print('save data error:', e)
+        logging.error(('save data error:', filename, e))
 
 
 def construct_response(msg: dict) -> Any:
@@ -127,14 +134,14 @@ def get_uid():
         try:
             user_id = requests.get(url, timeout=2).json()['openid']
         except Exception as e:
-            print('get uid error:', e)
+            logging.critical(('get uid error:', e))
         else:
             break  # 已取得用户ID
     else:
         user_id = None  # 超时
 
     messages = {'statusCode': 200 if user_id else 500, 'wx': user_id}
-    print('user id:', messages)
+    logging.info(('user id:', messages))
     return construct_response(messages)
 
 
@@ -202,8 +209,8 @@ def schedule_available():
             'teachers': settings['teachers']
         }
     except Exception as e:
-        print('list schedule error:', e)
-        messages = {'statusCode': 500, 'error': e}
+        logging.error(('list schedule error:', e))
+        messages = {'statusCode': 500}
 
     return construct_response(messages)
 
@@ -243,8 +250,8 @@ def show_reservations():
             'reservations': reservations[0]
         }
     except Exception as e:
-        print('list reservation error:', e)
-        messages = {'statusCode': 500, 'error': e}
+        logging.error(('list reservation error:', e))
+        messages = {'statusCode': 500}
 
     return construct_response(messages)
 
@@ -258,7 +265,7 @@ def make_reservations():
         global schedule, appointments, dynamic
 
         # 验证数据完整性：是否留空、是否有余量、是否在黑名单
-        if not all([ticket.get(item) for item in settings['questionnaire']]) \
+        if not all([ticket.get(item) for item in settings['must_fill']]) \
                 or schedule[ticket['date']][ticket['hour']] < 1 \
                 or ticket['wx'] in dynamic['blocked']:
             raise DataCheckException('data check failed')
@@ -275,7 +282,7 @@ def make_reservations():
         ticket['timestamp'] = time_shift().strftime(settings['timestamp'])
         appointments[new_ticket] = ticket
 
-        print('reserve: write data')
+        logging.info(('reserve:', 'write data'))
         Process(target=save_data, args=(appointments, 'tickets.json')).start()
 
         mail_content = '{}老师，{}（{}）预约了 {} ・ {} 的心理咨询。'.format(
@@ -287,8 +294,8 @@ def make_reservations():
         write_data(request.json)
         messages = {'statusCode': 200}
     except Exception as e:
-        print('make reservation error:', e)
-        messages = {'statusCode': 500, 'error': e}
+        logging.error(('make reservation error:', e))
+        messages = {'statusCode': 500}
 
     return construct_response(messages)
 
@@ -318,13 +325,13 @@ def edit_reservations():
                 schedule[date][hour] += 1  # 删除后，可以恢复该时间段的预约人数
                 Process(target=save_data, args=(schedule, 'schedules.json')).start()
 
-            print('edit: write data')
+            logging.info(('edit:', 'write data'))
             del appointments[ticket_id]
             Process(target=save_data, args=(appointments, 'tickets.json')).start()
 
         # 对已完成的工单，只有管理员有权限删除
         elif operation == 'cancel' and appointments_closed.get(ticket_id) and username == secrets['password']:
-            print('edit: write data')
+            logging.info(('edit:', 'write data'))
             del appointments_closed[ticket_id]
             Process(target=save_data, args=(appointments_closed, 'tickets.json')).start()
 
@@ -338,14 +345,14 @@ def edit_reservations():
         edit_data(uid, tid, op)
         messages = {'statusCode': 200}
     except Exception as e:
-        print('edit reservation error:', e)
-        messages = {'statusCode': 500, 'error': e}
+        logging.error(('edit reservation error:', e))
+        messages = {'statusCode': 500}
 
     return construct_response(messages)
 
 
 if __name__ == '__main__':
-    print('working directory:', path)
+    logging.debug(('working directory:', path))
     # 由于Process.start没有join，需要处理僵尸进程
     signal.signal(signal.SIGCHLD, signal.SIG_IGN)
     app.run(port=2333)
