@@ -26,7 +26,7 @@ path = os.path.dirname(inspect.getfile(inspect.currentframe())) + '/data/'
 
 log_file = path + 'server.log'
 log_format = "%(asctime)s - %(levelname)s - %(message)s"
-logging.basicConfig(filename=log_file, level=logging.DEBUG, format=log_format)
+logging.basicConfig(filename=log_file, level=logging.INFO, format=log_format)
 
 with open(path + 'secrets.json') as f_obj:
     secrets: dict = json.load(f_obj)              # 储存敏感信息
@@ -352,7 +352,7 @@ def edit_reservations():
 
 
 if __name__ == '__main__':
-    logging.debug(('working directory:', path))
+    logging.info(('working directory:', path))
     # 由于Process.start没有join，需要处理僵尸进程
     signal.signal(signal.SIGCHLD, signal.SIG_IGN)
     app.run(port=2333)
