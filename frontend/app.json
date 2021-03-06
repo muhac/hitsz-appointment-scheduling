@@ -10,7 +10,7 @@
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "电信学院心理咨询预约",
+    "navigationBarTitleText": "心理咨询预约",
     "navigationBarTextStyle": "black",
     "enablePullDownRefresh": false
   },
