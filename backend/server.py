@@ -148,7 +148,7 @@ def make_reservations():
         write_data(post)
     except Exception as e:
         print(e)
-        messages['statusCode'] = 500
+        messages = {'statusCode': 500, 'error': e}
 
     return construct_response(messages)
 
@@ -169,12 +169,9 @@ def edit_reservations():
                 appointments_closed[ticket_id] = appointments[ticket_id]
                 Process(target=save_data, args=(appointments_closed, 'tickets_closed.json')).start()
 
-            if operation == 'cancel':
-                try:
-                    schedule[date][hour] += 1
-                    Process(target=save_data, args=(schedule, 'schedules.json')).start()
-                except KeyError:
-                    pass
+            if operation == 'cancel' and date in schedule and hour in schedule[date]:
+                schedule[date][hour] += 1
+                Process(target=save_data, args=(schedule, 'schedules.json')).start()
 
             print('edit: write data')
             del appointments[ticket_id]
@@ -184,12 +181,9 @@ def edit_reservations():
             date, hour = appointments_closed[ticket_id]['date'], appointments_closed[ticket_id]['hour']
             appointments_closed[ticket_id]['status'] = operation
 
-            if operation == 'cancel':
-                try:
-                    schedule[date][hour] += 1
-                    Process(target=save_data, args=(schedule, 'schedules.json')).start()
-                except KeyError:
-                    pass
+            if operation == 'cancel' and date in schedule and hour in schedule[date]:
+                schedule[date][hour] += 1
+                Process(target=save_data, args=(schedule, 'schedules.json')).start()
 
             del appointments_closed[ticket_id]
             Process(target=save_data, args=(appointments_closed, 'tickets.json')).start()
@@ -206,7 +200,7 @@ def edit_reservations():
         edit(user, tid, op)
     except Exception as e:
         print('edit error:', e)
-        messages = {'statusCode': 500}
+        messages = {'statusCode': 500, 'error': e}
 
     return construct_response(messages)
 
@@ -239,8 +233,8 @@ def show_reservations():
         messages['tickets'] = data[1]
         messages['inProgress'] = data[0]
     except Exception as e:
-        print(e)
-        messages['statusCode'] = 500
+        print('list reservation error:', e)
+        messages = {'statusCode': 500, 'error': e}
 
     return construct_response(messages)
 
@@ -294,8 +288,8 @@ def available():
         messages['schedule'] = data[0]
         messages['teachers'] = settings['teachers']
     except Exception as e:
-        print(e)
-        messages['statusCode'] = 500
+        print('list schedule error:', e)
+        messages = {'statusCode': 500, 'error': e}
 
     return construct_response(messages)
 
