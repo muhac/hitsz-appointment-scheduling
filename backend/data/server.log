@@ -1,89 +1,130 @@
-2021-03-07 04:36:59,202 - INFO - ('Loaded data', {'teachers': ['应梦娴', '田薇', '梁羡飞', '李娜'], 'time_format': '%Y 年 %m 月 %d 日 ・ %A', 'work_start': [9, 10, 11, 14, 15, 16], 'work_hours': '{:02d}:00 ~ {:02d}:30', 'work_days': ['星期一', '星期二', '星期三', '星期四', '星期五'], 'max_capacity': 1, 'max_days': 14, 'hour_before': 1, 'ticket_format': '{:05d}@{}', 'timestamp': '%Y-%m-%d %H:%M:%S', 'sort_helper': '%Y 年 %m 月 %d 日 ・ %A%H:00 ~ %M:30', 'must_fill': ['wx', 'id', 'name', 'sex', 'mobile', 'teacher', 'date', 'hour', 'detail'], 'emails': {'应梦娴': '916720619@qq.com', '梁羡飞': '2695998275@qq.com', '田薇': '635661409@qq.com', '李娜': '2076505738@qq.com'}, 'languages': {'en': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], 'zh': ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日']}}, {}, {}, {}, {'work_days': ['2021 年 03 月 13 日'], 'off_days': ['2021 年 03 月 12 日'], 'blocked': []})
-2021-03-07 04:36:59,209 - DEBUG - ('working directory:', '/home/www/flask/hit/data/')
-2021-03-07 04:36:59,210 - INFO -  * Running on http://127.0.0.1:2333/ (Press CTRL+C to quit)
-2021-03-07 04:37:08,276 - DEBUG - Starting new HTTPS connection (1): api.weixin.qq.com:443
-2021-03-07 04:37:08,553 - DEBUG - https://api.weixin.qq.com:443 "GET /sns/jscode2session?appid=wxdefe17992df5e3fb&secret=655593c4a5b28331b9eda030a9f27e28&js_code=033udwFa1zs7DA023gJa1DP0wB0udwFg&grant_type=authorization_code HTTP/1.1" 200 82
-2021-03-07 04:37:08,555 - INFO - ('user id:', {'statusCode': 200, 'wx': 'oZD2K5coAejoOkIlB5CzE5GRIekQ'})
-2021-03-07 04:37:08,555 - INFO - 127.0.0.1 - - [07/Mar/2021 04:37:08] "[37mPOST /user/id/ HTTP/1.1[0m" 200 -
-2021-03-07 04:37:11,768 - INFO - 127.0.0.1 - - [07/Mar/2021 04:37:11] "[37mGET /plan/empty/ HTTP/1.1[0m" 200 -
-2021-03-07 04:37:11,771 - WARNING - ('update:', 'schedules.json')
-2021-03-07 04:37:55,853 - INFO - ('reserve:', 'write data')
-2021-03-07 04:37:55,857 - INFO - 127.0.0.1 - - [07/Mar/2021 04:37:55] "[37mPOST /plan/new/ HTTP/1.1[0m" 200 -
-2021-03-07 04:37:55,860 - WARNING - ('update:', 'schedules.json')
-2021-03-07 04:37:55,864 - WARNING - ('update:', 'tickets.json')
-2021-03-07 04:37:57,989 - INFO - 127.0.0.1 - - [07/Mar/2021 04:37:57] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:38:00,856 - INFO - 127.0.0.1 - - [07/Mar/2021 04:38:00] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:38:02,311 - INFO - 127.0.0.1 - - [07/Mar/2021 04:38:02] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:38:06,189 - INFO - 127.0.0.1 - - [07/Mar/2021 04:38:06] "[37mGET /plan/empty/ HTTP/1.1[0m" 200 -
-2021-03-07 04:38:23,346 - INFO - ('reserve:', 'write data')
-2021-03-07 04:38:23,350 - INFO - 127.0.0.1 - - [07/Mar/2021 04:38:23] "[37mPOST /plan/new/ HTTP/1.1[0m" 200 -
-2021-03-07 04:38:23,353 - WARNING - ('update:', 'schedules.json')
-2021-03-07 04:38:23,356 - WARNING - ('update:', 'tickets.json')
-2021-03-07 04:38:25,473 - INFO - 127.0.0.1 - - [07/Mar/2021 04:38:25] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:39:13,782 - INFO - 127.0.0.1 - - [07/Mar/2021 04:39:13] "[37mPOST /user/verify/ HTTP/1.1[0m" 200 -
-2021-03-07 04:39:14,569 - INFO - 127.0.0.1 - - [07/Mar/2021 04:39:14] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:39:20,358 - INFO - ('edit:', 'write data')
-2021-03-07 04:39:20,362 - INFO - 127.0.0.1 - - [07/Mar/2021 04:39:20] "[37mPOST /plan/edit/ HTTP/1.1[0m" 200 -
-2021-03-07 04:39:20,365 - WARNING - ('update:', 'tickets_closed.json')
-2021-03-07 04:39:20,369 - WARNING - ('update:', 'tickets.json')
-2021-03-07 04:39:20,425 - INFO - 127.0.0.1 - - [07/Mar/2021 04:39:20] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:39:21,561 - INFO - 127.0.0.1 - - [07/Mar/2021 04:39:21] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:39:24,982 - INFO - 127.0.0.1 - - [07/Mar/2021 04:39:24] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:39:26,742 - INFO - ('edit:', 'write data')
-2021-03-07 04:39:26,747 - INFO - 127.0.0.1 - - [07/Mar/2021 04:39:26] "[37mPOST /plan/edit/ HTTP/1.1[0m" 200 -
-2021-03-07 04:39:26,751 - WARNING - ('update:', 'tickets_closed.json')
-2021-03-07 04:39:26,755 - WARNING - ('update:', 'tickets.json')
-2021-03-07 04:39:26,813 - INFO - 127.0.0.1 - - [07/Mar/2021 04:39:26] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:39:27,773 - INFO - 127.0.0.1 - - [07/Mar/2021 04:39:27] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:39:32,137 - INFO - ('edit:', 'write data')
-2021-03-07 04:39:32,140 - INFO - 127.0.0.1 - - [07/Mar/2021 04:39:32] "[37mPOST /plan/edit/ HTTP/1.1[0m" 200 -
-2021-03-07 04:39:32,143 - WARNING - ('update:', 'tickets.json')
-2021-03-07 04:39:32,207 - INFO - 127.0.0.1 - - [07/Mar/2021 04:39:32] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:39:33,746 - INFO - ('edit:', 'write data')
-2021-03-07 04:39:33,749 - INFO - 127.0.0.1 - - [07/Mar/2021 04:39:33] "[37mPOST /plan/edit/ HTTP/1.1[0m" 200 -
-2021-03-07 04:39:33,752 - WARNING - ('update:', 'tickets.json')
-2021-03-07 04:39:33,824 - INFO - 127.0.0.1 - - [07/Mar/2021 04:39:33] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:39:36,121 - INFO - 127.0.0.1 - - [07/Mar/2021 04:39:36] "[37mGET /plan/empty/ HTTP/1.1[0m" 200 -
-2021-03-07 04:39:51,693 - INFO - ('reserve:', 'write data')
-2021-03-07 04:39:51,697 - INFO - 127.0.0.1 - - [07/Mar/2021 04:39:51] "[37mPOST /plan/new/ HTTP/1.1[0m" 200 -
-2021-03-07 04:39:51,700 - WARNING - ('update:', 'schedules.json')
-2021-03-07 04:39:51,704 - WARNING - ('update:', 'tickets.json')
-2021-03-07 04:39:53,834 - INFO - 127.0.0.1 - - [07/Mar/2021 04:39:53] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:39:56,951 - INFO - ('edit:', 'write data')
-2021-03-07 04:39:56,954 - INFO - 127.0.0.1 - - [07/Mar/2021 04:39:56] "[37mPOST /plan/edit/ HTTP/1.1[0m" 200 -
-2021-03-07 04:39:56,957 - WARNING - ('update:', 'schedules.json')
-2021-03-07 04:39:56,960 - WARNING - ('update:', 'tickets.json')
-2021-03-07 04:39:57,020 - INFO - 127.0.0.1 - - [07/Mar/2021 04:39:57] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:39:59,442 - INFO - 127.0.0.1 - - [07/Mar/2021 04:39:59] "[37mGET /plan/empty/ HTTP/1.1[0m" 200 -
-2021-03-07 04:40:11,594 - INFO - ('reserve:', 'write data')
-2021-03-07 04:40:11,599 - INFO - 127.0.0.1 - - [07/Mar/2021 04:40:11] "[37mPOST /plan/new/ HTTP/1.1[0m" 200 -
-2021-03-07 04:40:11,602 - WARNING - ('update:', 'schedules.json')
-2021-03-07 04:40:11,606 - WARNING - ('update:', 'tickets.json')
-2021-03-07 04:40:13,741 - INFO - 127.0.0.1 - - [07/Mar/2021 04:40:13] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:40:16,189 - INFO - 127.0.0.1 - - [07/Mar/2021 04:40:16] "[37mPOST /user/verify/ HTTP/1.1[0m" 200 -
-2021-03-07 04:40:16,965 - INFO - 127.0.0.1 - - [07/Mar/2021 04:40:16] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:40:19,312 - INFO - ('edit:', 'write data')
-2021-03-07 04:40:19,315 - INFO - 127.0.0.1 - - [07/Mar/2021 04:40:19] "[37mPOST /plan/edit/ HTTP/1.1[0m" 200 -
-2021-03-07 04:40:19,318 - WARNING - ('update:', 'schedules.json')
-2021-03-07 04:40:19,321 - WARNING - ('update:', 'tickets.json')
-2021-03-07 04:40:19,379 - INFO - 127.0.0.1 - - [07/Mar/2021 04:40:19] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:40:20,388 - INFO - 127.0.0.1 - - [07/Mar/2021 04:40:20] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:40:22,482 - INFO - 127.0.0.1 - - [07/Mar/2021 04:40:22] "[37mGET /plan/empty/ HTTP/1.1[0m" 200 -
-2021-03-07 04:40:35,962 - INFO - ('reserve:', 'write data')
-2021-03-07 04:40:35,966 - INFO - 127.0.0.1 - - [07/Mar/2021 04:40:35] "[37mPOST /plan/new/ HTTP/1.1[0m" 200 -
-2021-03-07 04:40:35,969 - WARNING - ('update:', 'schedules.json')
-2021-03-07 04:40:35,973 - WARNING - ('update:', 'tickets.json')
-2021-03-07 04:40:38,099 - INFO - 127.0.0.1 - - [07/Mar/2021 04:40:38] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:40:41,691 - INFO - 127.0.0.1 - - [07/Mar/2021 04:40:41] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:40:42,612 - INFO - 127.0.0.1 - - [07/Mar/2021 04:40:42] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:40:44,480 - INFO - 127.0.0.1 - - [07/Mar/2021 04:40:44] "[37mPOST /user/verify/ HTTP/1.1[0m" 200 -
-2021-03-07 04:40:45,327 - INFO - 127.0.0.1 - - [07/Mar/2021 04:40:45] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:40:48,035 - INFO - ('edit:', 'write data')
-2021-03-07 04:40:48,038 - INFO - 127.0.0.1 - - [07/Mar/2021 04:40:48] "[37mPOST /plan/edit/ HTTP/1.1[0m" 200 -
-2021-03-07 04:40:48,041 - WARNING - ('update:', 'tickets_closed.json')
-2021-03-07 04:40:48,044 - WARNING - ('update:', 'tickets.json')
-2021-03-07 04:40:48,107 - INFO - 127.0.0.1 - - [07/Mar/2021 04:40:48] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:40:49,180 - INFO - 127.0.0.1 - - [07/Mar/2021 04:40:49] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:40:51,334 - INFO - 127.0.0.1 - - [07/Mar/2021 04:40:51] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:40:52,267 - INFO - 127.0.0.1 - - [07/Mar/2021 04:40:52] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
-2021-03-07 04:40:54,580 - INFO - 127.0.0.1 - - [07/Mar/2021 04:40:54] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:38:30,366 - INFO - ('Loaded data', {'teachers': ['应梦娴', '田薇', '梁羡飞', '李娜'], 'time_format': '%Y 年 %m 月 %d 日 ・ %A', 'work_start': [9, 10, 11, 14, 15, 16], 'work_hours': '{:02d}:00 ~ {:02d}:30', 'work_days': ['星期一', '星期二', '星期三', '星期四', '星期五'], 'max_capacity': 1, 'max_days': 14, 'hour_before': 1, 'ticket_format': '{:05d}@{}', 'timestamp': '%Y-%m-%d %H:%M:%S', 'sort_helper': '%Y 年 %m 月 %d 日 ・ %A%H:00 ~ %M:30', 'must_fill': ['wx', 'id', 'name', 'sex', 'mobile', 'teacher', 'date', 'hour', 'detail'], 'emails': {'应梦娴': '916720619@qq.com', '梁羡飞': '2695998275@qq.com', '田薇': '635661409@qq.com', '李娜': '2076505738@qq.com'}, 'languages': {'en': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], 'zh': ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日']}}, {}, {}, {}, {'work_days': ['2021 年 03 月 13 日'], 'off_days': ['2021 年 03 月 12 日'], 'blocked': []})
+2021-03-07 05:38:30,373 - INFO - ('working directory:', '/home/www/flask/hit/data/')
+2021-03-07 05:38:30,374 - INFO -  * Running on http://127.0.0.1:2333/ (Press CTRL+C to quit)
+2021-03-07 05:38:53,180 - INFO - ('user id:', {'statusCode': 200, 'wx': 'oZD2K5coAejoOkIlB5CzE5GRIekQ'})
+2021-03-07 05:38:53,181 - INFO - 127.0.0.1 - - [07/Mar/2021 05:38:53] "[37mPOST /user/id/ HTTP/1.1[0m" 200 -
+2021-03-07 05:38:55,160 - INFO - 127.0.0.1 - - [07/Mar/2021 05:38:55] "[37mPOST /user/verify/ HTTP/1.1[0m" 200 -
+2021-03-07 05:38:55,326 - INFO - 127.0.0.1 - - [07/Mar/2021 05:38:55] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:38:56,488 - INFO - 127.0.0.1 - - [07/Mar/2021 05:38:56] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:38:58,870 - INFO - 127.0.0.1 - - [07/Mar/2021 05:38:58] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:38:59,618 - INFO - 127.0.0.1 - - [07/Mar/2021 05:38:59] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:39:00,750 - INFO - 127.0.0.1 - - [07/Mar/2021 05:39:00] "[37mGET /plan/empty/ HTTP/1.1[0m" 200 -
+2021-03-07 05:39:00,753 - WARNING - ('update:', 'schedules.json')
+2021-03-07 05:39:43,126 - INFO - ('reserve:', 'write data')
+2021-03-07 05:39:43,130 - INFO - 127.0.0.1 - - [07/Mar/2021 05:39:43] "[37mPOST /plan/new/ HTTP/1.1[0m" 200 -
+2021-03-07 05:39:43,133 - WARNING - ('update:', 'tickets.json')
+2021-03-07 05:39:43,138 - WARNING - ('update:', 'schedules.json')
+2021-03-07 05:39:45,257 - INFO - 127.0.0.1 - - [07/Mar/2021 05:39:45] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:39:47,829 - INFO - 127.0.0.1 - - [07/Mar/2021 05:39:47] "[37mGET /plan/empty/ HTTP/1.1[0m" 200 -
+2021-03-07 05:40:08,670 - INFO - ('reserve:', 'write data')
+2021-03-07 05:40:08,674 - INFO - 127.0.0.1 - - [07/Mar/2021 05:40:08] "[37mPOST /plan/new/ HTTP/1.1[0m" 200 -
+2021-03-07 05:40:08,678 - WARNING - ('update:', 'schedules.json')
+2021-03-07 05:40:08,681 - WARNING - ('update:', 'tickets.json')
+2021-03-07 05:40:10,799 - INFO - 127.0.0.1 - - [07/Mar/2021 05:40:10] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:40:15,291 - INFO - 127.0.0.1 - - [07/Mar/2021 05:40:15] "[37mGET /plan/empty/ HTTP/1.1[0m" 200 -
+2021-03-07 05:40:28,330 - INFO - ('reserve:', 'write data')
+2021-03-07 05:40:28,334 - INFO - 127.0.0.1 - - [07/Mar/2021 05:40:28] "[37mPOST /plan/new/ HTTP/1.1[0m" 200 -
+2021-03-07 05:40:28,337 - WARNING - ('update:', 'schedules.json')
+2021-03-07 05:40:28,341 - WARNING - ('update:', 'tickets.json')
+2021-03-07 05:40:30,468 - INFO - 127.0.0.1 - - [07/Mar/2021 05:40:30] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:40:36,099 - INFO - 127.0.0.1 - - [07/Mar/2021 05:40:36] "[37mGET /plan/empty/ HTTP/1.1[0m" 200 -
+2021-03-07 05:40:47,809 - INFO - ('reserve:', 'write data')
+2021-03-07 05:40:47,814 - INFO - 127.0.0.1 - - [07/Mar/2021 05:40:47] "[37mPOST /plan/new/ HTTP/1.1[0m" 200 -
+2021-03-07 05:40:47,817 - WARNING - ('update:', 'tickets.json')
+2021-03-07 05:40:47,821 - WARNING - ('update:', 'schedules.json')
+2021-03-07 05:40:49,958 - INFO - 127.0.0.1 - - [07/Mar/2021 05:40:49] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:41:15,977 - INFO - ('user id:', {'statusCode': 200, 'wx': 'oZD2K5UnpOFcPfmc9-gEXz5i3SjM'})
+2021-03-07 05:41:15,978 - INFO - 127.0.0.1 - - [07/Mar/2021 05:41:15] "[37mPOST /user/id/ HTTP/1.1[0m" 200 -
+2021-03-07 05:41:16,976 - INFO - 127.0.0.1 - - [07/Mar/2021 05:41:16] "[37mGET /plan/empty/ HTTP/1.1[0m" 200 -
+2021-03-07 05:41:47,197 - INFO - ('reserve:', 'write data')
+2021-03-07 05:41:47,201 - INFO - 127.0.0.1 - - [07/Mar/2021 05:41:47] "[37mPOST /plan/new/ HTTP/1.1[0m" 200 -
+2021-03-07 05:41:47,204 - WARNING - ('update:', 'schedules.json')
+2021-03-07 05:41:47,207 - WARNING - ('update:', 'tickets.json')
+2021-03-07 05:41:49,305 - INFO - 127.0.0.1 - - [07/Mar/2021 05:41:49] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:41:53,081 - INFO - 127.0.0.1 - - [07/Mar/2021 05:41:53] "[37mGET /plan/empty/ HTTP/1.1[0m" 200 -
+2021-03-07 05:42:09,197 - INFO - ('reserve:', 'write data')
+2021-03-07 05:42:09,202 - INFO - 127.0.0.1 - - [07/Mar/2021 05:42:09] "[37mPOST /plan/new/ HTTP/1.1[0m" 200 -
+2021-03-07 05:42:09,205 - WARNING - ('update:', 'schedules.json')
+2021-03-07 05:42:09,208 - WARNING - ('update:', 'tickets.json')
+2021-03-07 05:42:11,300 - INFO - 127.0.0.1 - - [07/Mar/2021 05:42:11] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:42:34,185 - INFO - 127.0.0.1 - - [07/Mar/2021 05:42:34] "[37mGET /plan/empty/ HTTP/1.1[0m" 200 -
+2021-03-07 05:42:49,513 - INFO - ('reserve:', 'write data')
+2021-03-07 05:42:49,518 - INFO - 127.0.0.1 - - [07/Mar/2021 05:42:49] "[37mPOST /plan/new/ HTTP/1.1[0m" 200 -
+2021-03-07 05:42:49,522 - WARNING - ('update:', 'tickets.json')
+2021-03-07 05:42:49,528 - WARNING - ('update:', 'schedules.json')
+2021-03-07 05:42:51,619 - INFO - 127.0.0.1 - - [07/Mar/2021 05:42:51] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:43:00,053 - INFO - ('edit:', 'write data')
+2021-03-07 05:43:00,057 - INFO - 127.0.0.1 - - [07/Mar/2021 05:43:00] "[37mPOST /plan/edit/ HTTP/1.1[0m" 200 -
+2021-03-07 05:43:00,060 - WARNING - ('update:', 'schedules.json')
+2021-03-07 05:43:00,064 - WARNING - ('update:', 'tickets.json')
+2021-03-07 05:43:00,093 - INFO - 127.0.0.1 - - [07/Mar/2021 05:43:00] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:43:07,960 - INFO - 127.0.0.1 - - [07/Mar/2021 05:43:07] "[37mGET /plan/empty/ HTTP/1.1[0m" 200 -
+2021-03-07 05:43:19,130 - INFO - ('reserve:', 'write data')
+2021-03-07 05:43:19,134 - INFO - 127.0.0.1 - - [07/Mar/2021 05:43:19] "[37mPOST /plan/new/ HTTP/1.1[0m" 200 -
+2021-03-07 05:43:19,137 - WARNING - ('update:', 'schedules.json')
+2021-03-07 05:43:19,141 - WARNING - ('update:', 'tickets.json')
+2021-03-07 05:43:21,248 - INFO - 127.0.0.1 - - [07/Mar/2021 05:43:21] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:43:24,618 - INFO - 127.0.0.1 - - [07/Mar/2021 05:43:24] "[37mPOST /user/verify/ HTTP/1.1[0m" 200 -
+2021-03-07 05:43:24,746 - INFO - 127.0.0.1 - - [07/Mar/2021 05:43:24] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:43:36,589 - INFO - ('edit:', 'write data')
+2021-03-07 05:43:36,594 - INFO - 127.0.0.1 - - [07/Mar/2021 05:43:36] "[37mPOST /plan/edit/ HTTP/1.1[0m" 200 -
+2021-03-07 05:43:36,598 - WARNING - ('update:', 'tickets_closed.json')
+2021-03-07 05:43:36,602 - WARNING - ('update:', 'tickets.json')
+2021-03-07 05:43:36,678 - INFO - 127.0.0.1 - - [07/Mar/2021 05:43:36] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:43:42,039 - INFO - ('edit:', 'write data')
+2021-03-07 05:43:42,043 - INFO - 127.0.0.1 - - [07/Mar/2021 05:43:42] "[37mPOST /plan/edit/ HTTP/1.1[0m" 200 -
+2021-03-07 05:43:42,046 - WARNING - ('update:', 'schedules.json')
+2021-03-07 05:43:42,049 - WARNING - ('update:', 'tickets.json')
+2021-03-07 05:43:42,109 - INFO - 127.0.0.1 - - [07/Mar/2021 05:43:42] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:43:44,076 - INFO - 127.0.0.1 - - [07/Mar/2021 05:43:44] "[37mGET /plan/empty/ HTTP/1.1[0m" 200 -
+2021-03-07 05:43:45,878 - INFO - 127.0.0.1 - - [07/Mar/2021 05:43:45] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:43:46,668 - INFO - 127.0.0.1 - - [07/Mar/2021 05:43:46] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:43:49,458 - INFO - 127.0.0.1 - - [07/Mar/2021 05:43:49] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:43:54,756 - INFO - 127.0.0.1 - - [07/Mar/2021 05:43:54] "[37mGET /plan/empty/ HTTP/1.1[0m" 200 -
+2021-03-07 05:44:05,061 - INFO - ('reserve:', 'write data')
+2021-03-07 05:44:05,066 - INFO - 127.0.0.1 - - [07/Mar/2021 05:44:05] "[37mPOST /plan/new/ HTTP/1.1[0m" 200 -
+2021-03-07 05:44:05,069 - WARNING - ('update:', 'schedules.json')
+2021-03-07 05:44:05,073 - WARNING - ('update:', 'tickets.json')
+2021-03-07 05:44:07,165 - INFO - 127.0.0.1 - - [07/Mar/2021 05:44:07] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:44:17,368 - INFO - 127.0.0.1 - - [07/Mar/2021 05:44:17] "[37mPOST /user/verify/ HTTP/1.1[0m" 200 -
+2021-03-07 05:44:17,500 - INFO - 127.0.0.1 - - [07/Mar/2021 05:44:17] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:44:23,448 - INFO - 127.0.0.1 - - [07/Mar/2021 05:44:23] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:44:24,598 - INFO - 127.0.0.1 - - [07/Mar/2021 05:44:24] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:44:26,339 - INFO - ('edit:', 'write data')
+2021-03-07 05:44:26,342 - INFO - 127.0.0.1 - - [07/Mar/2021 05:44:26] "[37mPOST /plan/edit/ HTTP/1.1[0m" 200 -
+2021-03-07 05:44:26,345 - WARNING - ('update:', 'tickets_closed.json')
+2021-03-07 05:44:26,348 - WARNING - ('update:', 'tickets.json')
+2021-03-07 05:44:26,408 - INFO - 127.0.0.1 - - [07/Mar/2021 05:44:26] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:44:27,516 - INFO - ('edit:', 'write data')
+2021-03-07 05:44:27,519 - INFO - 127.0.0.1 - - [07/Mar/2021 05:44:27] "[37mPOST /plan/edit/ HTTP/1.1[0m" 200 -
+2021-03-07 05:44:27,523 - WARNING - ('update:', 'tickets_closed.json')
+2021-03-07 05:44:27,526 - WARNING - ('update:', 'tickets.json')
+2021-03-07 05:44:27,595 - INFO - 127.0.0.1 - - [07/Mar/2021 05:44:27] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:44:28,419 - INFO - ('edit:', 'write data')
+2021-03-07 05:44:28,423 - INFO - 127.0.0.1 - - [07/Mar/2021 05:44:28] "[37mPOST /plan/edit/ HTTP/1.1[0m" 200 -
+2021-03-07 05:44:28,427 - WARNING - ('update:', 'tickets_closed.json')
+2021-03-07 05:44:28,430 - WARNING - ('update:', 'tickets.json')
+2021-03-07 05:44:28,488 - INFO - 127.0.0.1 - - [07/Mar/2021 05:44:28] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:44:29,489 - INFO - ('edit:', 'write data')
+2021-03-07 05:44:29,493 - INFO - 127.0.0.1 - - [07/Mar/2021 05:44:29] "[37mPOST /plan/edit/ HTTP/1.1[0m" 200 -
+2021-03-07 05:44:29,496 - WARNING - ('update:', 'tickets_closed.json')
+2021-03-07 05:44:29,499 - WARNING - ('update:', 'tickets.json')
+2021-03-07 05:44:29,568 - INFO - 127.0.0.1 - - [07/Mar/2021 05:44:29] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:44:31,398 - INFO - 127.0.0.1 - - [07/Mar/2021 05:44:31] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:44:36,568 - INFO - 127.0.0.1 - - [07/Mar/2021 05:44:36] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:44:38,558 - INFO - 127.0.0.1 - - [07/Mar/2021 05:44:38] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:44:39,716 - INFO - 127.0.0.1 - - [07/Mar/2021 05:44:39] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:44:48,766 - INFO - 127.0.0.1 - - [07/Mar/2021 05:44:48] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:44:49,531 - INFO - 127.0.0.1 - - [07/Mar/2021 05:44:49] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:44:54,054 - INFO - 127.0.0.1 - - [07/Mar/2021 05:44:54] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:44:58,439 - INFO - 127.0.0.1 - - [07/Mar/2021 05:44:58] "[37mPOST /user/verify/ HTTP/1.1[0m" 200 -
+2021-03-07 05:44:58,590 - INFO - 127.0.0.1 - - [07/Mar/2021 05:44:58] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:45:01,659 - INFO - ('edit:', 'write data')
+2021-03-07 05:45:01,663 - INFO - 127.0.0.1 - - [07/Mar/2021 05:45:01] "[37mPOST /plan/edit/ HTTP/1.1[0m" 200 -
+2021-03-07 05:45:01,666 - WARNING - ('update:', 'tickets_closed.json')
+2021-03-07 05:45:01,669 - WARNING - ('update:', 'tickets.json')
+2021-03-07 05:45:01,728 - INFO - 127.0.0.1 - - [07/Mar/2021 05:45:01] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:45:04,338 - INFO - 127.0.0.1 - - [07/Mar/2021 05:45:04] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:45:07,993 - INFO - 127.0.0.1 - - [07/Mar/2021 05:45:07] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:45:24,608 - INFO - 127.0.0.1 - - [07/Mar/2021 05:45:24] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
+2021-03-07 05:45:27,147 - INFO - 127.0.0.1 - - [07/Mar/2021 05:45:27] "[37mPOST /plan/list/ HTTP/1.1[0m" 200 -
