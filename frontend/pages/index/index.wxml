@@ -3,8 +3,7 @@
 <view class="container">
 
   <image bindtap="changebanner" src="../../image/{{banner}}.png" class="banner" mode="heightFix"></image>
-
-  <view class="welcome">Have A Great Day!</view>
+  <view class="welcome">Have a Great Day!</view>
 
   <view class="options">
     <button class="weui-btn" type="primary" bindtap="gotoBook">预约咨询</button>
@@ -13,7 +12,7 @@
   </view>
 
   <view class="weui-footer footer">
-    <view>© 2021 Yjh & Lmh</view><br />
-    <view>@哈工大（深圳）电信学院</view>
+    <view><text>© 2021</text><text class="sep">·</text><text>Yjh & Lmh</text></view><br />
+    <view><text>哈工大深圳</text><text class="sep">·</text><text>电信学院</text></view>
   </view>
 </view>
