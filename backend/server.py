@@ -9,6 +9,10 @@ from typing import Any, Callable
 from multiprocessing import Process
 from datetime import datetime, timedelta
 
+from smtplib import SMTP_SSL
+from email.header import Header
+from email.mime.text import MIMEText
+
 from flask import *
 from flask_cors import CORS
 
@@ -22,8 +26,31 @@ with open(path + 'schedules.json') as f_obj:
     schedule = json.load(f_obj)
 with open(path + 'tickets.json') as f_obj:
     appointments = json.load(f_obj)
+with open(path + 'tickets_closed.json') as f_obj:
+    appointments_closed = json.load(f_obj)
 with open(path + 'dynamic.json') as f_obj:
     dynamic = json.load(f_obj)
+
+
+def send_mail(receiver: str, title: str, content: str) -> None:
+    try:
+        server = secrets['mailSettings']['server']
+        username = secrets['mailSettings']['username']
+        password = secrets['mailSettings']['password']
+
+        smtp = SMTP_SSL(server)
+        smtp.set_debuglevel(0)
+        smtp.ehlo(server)
+        smtp.login(username, password)
+
+        msg = MIMEText(content, "plain", 'utf-8')
+        msg["Subject"] = Header(title, 'utf-8')
+        msg["From"] = username
+        msg["To"] = receiver
+        smtp.sendmail(username, receiver, msg.as_string())
+        smtp.quit()
+    except Exception as e:
+        print('send mail error:', e)
 
 
 def save_data(data: Any, filename: str) -> None:
@@ -109,6 +136,10 @@ def make_reservations():
         print('reserve: write data')
         Process(target=save_data, args=(appointments, 'tickets.json')).start()
 
+        mail_content = '{}老师，{}（{}）预约了{} ・ {}的心理咨询。'.format(
+            data["teacher"], data['name'], data['mobile'], data['date'], data['hour'])
+        Process(target=send_mail, args=('limuhan@live.com', '新的心理咨询预约', mail_content)).start()
+
     post = request.json
     messages = {"statusCode": 200}
 
@@ -125,15 +156,18 @@ def make_reservations():
 @app.route("/edit/", methods=['POST'])
 def edit_reservations():
     def edit(username, ticket_id, operation):
-        global appointments, schedule
+        global schedule, appointments, appointments_closed
+
+        if operation not in ['open', 'closed', 'cancel']:
+            raise KeyError
 
         if appointments.get(ticket_id) and username in (appointments[ticket_id]['wx'], secrets['password']):
             date, hour = appointments[ticket_id]['date'], appointments[ticket_id]['hour']
             appointments[ticket_id]['status'] = operation
-            del appointments[ticket_id]  # TODO
 
-            print('edit: write data')
-            Process(target=save_data, args=(appointments, 'tickets.json')).start()
+            if operation == 'closed':
+                appointments_closed[ticket_id] = appointments[ticket_id]
+                Process(target=save_data, args=(appointments_closed, 'tickets_closed.json')).start()
 
             if operation == 'cancel':
                 try:
@@ -141,6 +175,25 @@ def edit_reservations():
                     Process(target=save_data, args=(schedule, 'schedules.json')).start()
                 except KeyError:
                     pass
+
+            print('edit: write data')
+            del appointments[ticket_id]
+            Process(target=save_data, args=(appointments, 'tickets.json')).start()
+
+        elif appointments_closed.get(ticket_id) and username == secrets['password']:
+            date, hour = appointments_closed[ticket_id]['date'], appointments_closed[ticket_id]['hour']
+            appointments_closed[ticket_id]['status'] = operation
+
+            if operation == 'cancel':
+                try:
+                    schedule[date][hour] += 1
+                    Process(target=save_data, args=(schedule, 'schedules.json')).start()
+                except KeyError:
+                    pass
+
+            del appointments_closed[ticket_id]
+            Process(target=save_data, args=(appointments_closed, 'tickets.json')).start()
+
         else:
             print('edit: permission denied')
 
@@ -160,24 +213,29 @@ def edit_reservations():
 
 @app.route("/list/", methods=['POST'])
 def show_reservations():
-    def get_data(user_filter: str = None):
-        global appointments
+    def get_data(user_filter: str, tag: str):
+        global appointments, appointments_closed
+
+        if tag not in ['open', 'closed']:
+            raise KeyError
+        appointments_selected = appointments_closed if tag == 'closed' else appointments
 
         time_format = date_convert(settings['sort_helper'], ('zh', 'en'))
-        tickets = sorted(list(appointments.keys()),
-                         key=lambda z: time_format(appointments[z]['date'] + appointments[z]['hour']))
+        tickets = sorted(list(appointments_selected.keys()), key=lambda z: time_format(
+            appointments_selected[z]['date'] + appointments_selected[z]['hour']), reverse=(tag == 'closed'))
 
         if user_filter != secrets['password']:
-            tickets = [ticket for ticket in tickets if appointments[ticket].get('wx') == user_filter]
+            tickets = [ticket for ticket in tickets if appointments_selected[ticket].get('wx') == user_filter]
+        appointments_filtered = {ticket: appointments_selected[ticket] for ticket in tickets}
 
-        appointments_filtered = {ticket: appointments[ticket] for ticket in tickets}
         return appointments_filtered, tickets
 
     messages = {'statusCode': 200}
 
     try:
         username = request.json.get('user')
-        data = get_data(username)
+        ticket_status = request.json.get('tag')
+        data = get_data(username, ticket_status)
         messages['tickets'] = data[1]
         messages['inProgress'] = data[0]
     except Exception as e:
