@@ -1,14 +1,17 @@
-<view class="Toptitle">请输入管理员密码</view>
-<form bindsubmit="formSubmit">
-  <view class='content'>
-    <block wx:for="{{Length}}" wx:key="item">
-      <input class='iptbox' value="{{Value.length>=index+1?Value[index]:''}}" disabled password='{{ispassword}}'
-        catchtap='Tap'></input>
-    </block>
-  </view>
-  <input name="password" password="{{true}}" class='ipt' maxlength="{{Length}}" focus="{{isFocus}}"
-    bindinput="Focus"></input>
-  <view>
-    <button class="btn-area" type='primary' disabled='{{disabled}}' formType="primary">下一步</button>
-  </view>
-</form>
+<!--pages/admin_verify/admin_verify.wxml-->
+<view class="page" data-weui-theme="{{theme}}">
+  <mp-toptips msg="{{error}}" type="error" show="{{error}}"></mp-toptips>
+
+  <mp-form-page title="管理后台" subtitle="需要验证您的身份">
+      <mp-cells>
+        <mp-cell prop="password" title="管理密码" ext-class="">
+          <input class="weui-input" password type="text" placeholder="请输入管理密码" confirm-type="done" bindinput="formInputChange" value="{{password}}"/>
+        </mp-cell>
+      </mp-cells>
+
+    <view slot="button">
+            <button class="weui-btn" type="primary" bindtap="login">登录</button>
+        </view>
+    </mp-form-page>
+</view>
+
