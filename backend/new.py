@@ -43,8 +43,8 @@ with open('data/settings.json', 'w') as f:
     json.dump(settings, f)
 
 dynamic = {
-    'work_days': ['2021 年 03 月 13 日', ],  # 特殊工作日
-    'off_days': ['2021 年 03 月 12 日', ],  # 特殊休息日
+    'work_days': [],  # 特殊工作日
+    'off_days': [],  # 特殊休息日
     'blocked': []  # 封禁用户名单
 }
 

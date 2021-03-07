@@ -285,10 +285,11 @@ def make_reservations():
         logging.info(('reserve:', 'write data'))
         Process(target=save_data, args=(appointments, 'tickets.json')).start()
 
+        mail_receiver = settings['emails'][ticket['teacher']] \
+            if ticket['name'] != '张三' else secrets['mailSettings']['maintainer']  # 测试账号
         mail_content = '{}老师，{}预约了 {}{} 的心理咨询。'.format(
             ticket['teacher'], '有同学', ticket['date'].split('·')[0], ticket['hour'][:5])
-        Process(target=send_mail, args=('limuhan@live.com', '新的心理咨询预约', mail_content)).start()
-        # TODO: 测试完成后将收件人改为 settings['emails'][ticket['teacher']]
+        Process(target=send_mail, args=(mail_receiver, '新的心理咨询预约', mail_content)).start()
 
     try:
         write_data(request.json)
