@@ -72,13 +72,6 @@ Page({
 
   },
 
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-
-  },
-
   formInputChange(e) {
     wx.setStorage({
       key: "password",
