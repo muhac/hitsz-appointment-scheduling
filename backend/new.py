@@ -14,6 +14,7 @@ with open('data/tickets_closed.json', 'w') as f:
     json.dump({}, f)
 
 settings = {
+    'checkpoint_frequency': 600,                               # 数据备份频率（秒）
     'teachers': ['应梦娴', '田薇', '梁羡飞', '李娜'],              # 辅导员列表
     'date_format': '%Y 年 %m 月 %d 日 · %A',                     # 显示日期格式
     'work_start': [9, 10, 11, 14, 15, 16],                      # 每场开始时间
