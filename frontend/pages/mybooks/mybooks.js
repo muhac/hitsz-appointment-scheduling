@@ -207,15 +207,6 @@ Page({
 
   },
 
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-
-  },
-
-
-
   delonclick: function (e) {
     console.log(e)
     this.setData({
@@ -224,8 +215,6 @@ Page({
     })
 
   },
-
-
 
   tapDialogButton_del: function (e) {
     var that = this
