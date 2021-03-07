@@ -1,22 +1,21 @@
 {
-  "pages": [
-    "pages/index/index",
-    "pages/mybooks/mybooks",
-    "pages/admin_verify/admin_verify",
-    "pages/book/book",
-    "pages/admin/admin"
-
-  ],
-  "window": {
-    "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "心理咨询预约",
-    "navigationBarTextStyle": "black",
-    "enablePullDownRefresh": false
-  },
-  "style": "v2",
-  "sitemapLocation": "sitemap.json",
-  "useExtendedLib": {
-    "weui": true
-  }
+   "pages": [
+      "pages/index/index",
+      "pages/mybooks/mybooks",
+      "pages/admin_verify/admin_verify",
+      "pages/book/book",
+      "pages/admin/admin"
+   ],
+   "window": {
+      "backgroundTextStyle": "light",
+      "navigationBarBackgroundColor": "#fff",
+      "navigationBarTitleText": "心理咨询预约",
+      "navigationBarTextStyle": "black",
+      "enablePullDownRefresh": false
+   },
+   "style": "v2",
+   "sitemapLocation": "sitemap.json",
+   "useExtendedLib": {
+      "weui": true
+   }
 }

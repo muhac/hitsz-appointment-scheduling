@@ -1,11 +1,11 @@
 {
-  "navigationBarBackgroundColor": "#ffffff",
-  "navigationBarTextStyle": "black",
-  "navigationBarTitleText": "管理后台",
-  "backgroundColor": "#eeeeee",
-  "backgroundTextStyle": "light",
-  "component": true,
-  "usingComponents": {
-    "mp-dialog": "weui-miniprogram/dialog/dialog"
-  }
+   "navigationBarBackgroundColor": "#ffffff",
+   "navigationBarTextStyle": "black",
+   "navigationBarTitleText": "管理后台",
+   "backgroundColor": "#eeeeee",
+   "backgroundTextStyle": "light",
+   "component": true,
+   "usingComponents": {
+      "mp-dialog": "weui-miniprogram/dialog/dialog"
+   }
 }
