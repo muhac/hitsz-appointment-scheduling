@@ -226,12 +226,25 @@ def show_reservations():
         if tag not in ['open', 'closed']:
             raise DataCheckException('key check failed')
 
-        appointments_selected = appointments if tag != 'closed' else appointments_closed
-
         # 工单展示按预约时间顺序由近及远。工单ID仅作为唯一标识符，并不参与排序
+        appointments_selected = appointments if tag != 'closed' else appointments_closed
         time_format = date_convert(settings['time_format'], ('zh', 'en'))
         tickets = sorted(list(appointments_selected.keys()), key=lambda z: time_format(
             appointments_selected[z]['date'] + appointments_selected[z]['hour']), reverse=(tag == 'closed'))
+
+        # 自动关闭今天之前的工单
+        expired_appointments_exist = False
+        time_format = date_convert(settings['date_format'], ('zh', 'en'))
+        while tickets and tag == 'open' and time_format(appointments[tickets[0]]['date']) < time_shift(days=-1):
+            ticket_id = tickets.pop(0)
+            appointments[ticket_id]['status'] = 'closed'  # TODO: expired
+            appointments_closed[ticket_id] = appointments[ticket_id]
+            del appointments[ticket_id]
+            expired_appointments_exist = True
+        if expired_appointments_exist:
+            logging.info(('list:', 'close expired'))
+            Process(target=save_data, args=(appointments, 'tickets.json')).start()
+            Process(target=save_data, args=(appointments_closed, 'tickets_closed.json')).start()
 
         # 对于普通用户筛选出本人的预约，管理员可以查看所有预约
         if user_filter != secrets['password']:
@@ -334,7 +347,7 @@ def edit_reservations():
         elif operation == 'cancel' and appointments_closed.get(ticket_id) and username == secrets['password']:
             logging.info(('edit:', 'write data'))
             del appointments_closed[ticket_id]
-            Process(target=save_data, args=(appointments_closed, 'tickets.json')).start()
+            Process(target=save_data, args=(appointments_closed, 'tickets_closed.json')).start()
 
         else:
             raise DataCheckException('permission denied')
