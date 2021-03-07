@@ -1,17 +1,17 @@
 {
-  "navigationBarBackgroundColor": "#ffffff",
-  "navigationBarTextStyle": "black",
-  "navigationBarTitleText": "管理中心",
-  "backgroundColor": "#eeeeee",
-  "backgroundTextStyle": "light",
-  "component": true,
-  "usingComponents": {
-    "mp-cells": "weui-miniprogram/cells/cells",
-    "mp-cell": "weui-miniprogram/cell/cell",
-    "mp-checkbox": "weui-miniprogram/checkbox/checkbox",
-    "mp-checkbox-group": "weui-miniprogram/checkbox-group/checkbox-group",
-    "mp-form": "weui-miniprogram/form/form",
-    "mp-form-page": "weui-miniprogram/form-page/form-page",
-    "mp-toptips": "weui-miniprogram/toptips/toptips"
-  }
+   "navigationBarBackgroundColor": "#ffffff",
+   "navigationBarTextStyle": "black",
+   "navigationBarTitleText": "管理中心",
+   "backgroundColor": "#eeeeee",
+   "backgroundTextStyle": "light",
+   "component": true,
+   "usingComponents": {
+      "mp-cells": "weui-miniprogram/cells/cells",
+      "mp-cell": "weui-miniprogram/cell/cell",
+      "mp-checkbox": "weui-miniprogram/checkbox/checkbox",
+      "mp-checkbox-group": "weui-miniprogram/checkbox-group/checkbox-group",
+      "mp-form": "weui-miniprogram/form/form",
+      "mp-form-page": "weui-miniprogram/form-page/form-page",
+      "mp-toptips": "weui-miniprogram/toptips/toptips"
+   }
 }
