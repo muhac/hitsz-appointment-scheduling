@@ -22,23 +22,23 @@ from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 
 
-path = os.path.dirname(inspect.getfile(inspect.currentframe())) + '/data/'
+path = os.path.dirname(inspect.getfile(inspect.currentframe()))
 
-log_file = path + 'server.log'
+log_file = path + '/server.log'
 log_format = "%(asctime)s - %(levelname)s - %(message)s"
 logging.basicConfig(filename=log_file, level=logging.INFO, format=log_format)
 
-with open(path + 'secrets.json') as f_obj:
+with open(path + '/data/secrets.json') as f_obj:
     secrets: dict = json.load(f_obj)              # 储存敏感信息
-with open(path + 'settings.json') as f_obj:
+with open(path + '/data/settings.json') as f_obj:
     settings: dict = json.load(f_obj)             # 储存基本设置
-with open(path + 'schedules.json') as f_obj:
+with open(path + '/data/schedules.json') as f_obj:
     schedule: dict = json.load(f_obj)             # 储存预约余量
-with open(path + 'tickets.json') as f_obj:
+with open(path + '/data/tickets.json') as f_obj:
     appointments: dict = json.load(f_obj)         # 储存进行中预约
-with open(path + 'tickets_closed.json') as f_obj:
+with open(path + '/data/tickets_closed.json') as f_obj:
     appointments_closed: dict = json.load(f_obj)  # 储存已完成预约
-with open(path + 'dynamic.json') as f_obj:
+with open(path + '/data/dynamic.json') as f_obj:
     dynamic: dict = json.load(f_obj)              # 储存动态规则
 
 logging.info(('Loaded data', settings, schedule,
@@ -78,7 +78,7 @@ def time_shift(*args: Any, **kwargs: Any) -> datetime:
 
 
 def date_lang(date: str, lang: (str, str) = ('en', 'zh')) -> str:
-    """时间戳中英互译 TODO: 前端渲染"""
+    """时间戳中英互译"""
     languages: dict = settings['languages']
     source_words, target_words = languages[lang[0]], languages[lang[1]]
     for source_word, target_word in zip(source_words, target_words):
@@ -95,7 +95,7 @@ def save_data(data: Any, filename: str) -> None:
     """备份数据（没有数据库，只有json）"""
     logging.warning(('update:', filename))
     try:
-        with open(path + filename, 'w') as f:
+        with open(path + '/data/' + filename, 'w') as f:
             json.dump(data, f)
     except Exception as e:
         # 仅作为备份，实时数据全在内存，少量失败问题不大（？）
@@ -161,7 +161,7 @@ def schedule_available():
         """筛选展示的时间段并排序"""
         global schedule, dynamic
 
-        time_format = date_convert(settings['time_format'], ('zh', 'en'))
+        time_format = date_convert(settings['date_format'], ('zh', 'en'))
         dates = sorted(list(schedule.keys()), key=lambda z: time_format(z))
 
         # 检测数据完整性：是否包含从当日起共[max_days]天
@@ -171,10 +171,10 @@ def schedule_available():
 
             schedule_new = {}
             for day in range(max_days):
-                date = date_lang(time_shift(days=day).strftime(settings['time_format']))
+                date = date_lang(time_shift(days=day).strftime(settings['date_format']))
                 schedule_new[date] = {}
                 for start in settings['work_start']:
-                    hour = settings['work_hours'].format(start, start)
+                    hour = settings['hour_format'].format(start)
                     exist = date in dates and hour in list(schedule[date].keys())  # 此时间段可能已有预约
                     schedule_new[date][hour] = schedule[date][hour] if exist else settings['max_capacity']
 
@@ -182,7 +182,7 @@ def schedule_available():
             Process(target=save_data, args=(schedule, 'schedules.json')).start()
 
         # 按照时间顺序排序
-        time_format = date_convert(settings['time_format'], ('zh', 'en'))
+        time_format = date_convert(settings['date_format'], ('zh', 'en'))
         date_show = sorted(list(schedule.keys()), key=lambda z: time_format(z))
         hour_show = sorted(list(schedule[date_show[0]].keys()), key=lambda z: int(z[:2]))
 
@@ -193,7 +193,7 @@ def schedule_available():
         schedule_show = {date: schedule[date] for date in date_show}
 
         # 将当日早些时候的余量设为0
-        time_format = date_convert(settings['sort_helper'], ('zh', 'en'))
+        time_format = date_convert(settings['time_format'], ('zh', 'en'))
         schedule_show[date_show[0]] = {hour: 0 if time_shift(hours=settings['hour_before']) > time_format(
             date_show[0] + hour) else schedule_show[date_show[0]][hour] for hour in hour_show}
 
@@ -229,7 +229,7 @@ def show_reservations():
         appointments_selected = appointments if tag != 'closed' else appointments_closed
 
         # 工单展示按预约时间顺序由近及远。工单ID仅作为唯一标识符，并不参与排序
-        time_format = date_convert(settings['sort_helper'], ('zh', 'en'))
+        time_format = date_convert(settings['time_format'], ('zh', 'en'))
         tickets = sorted(list(appointments_selected.keys()), key=lambda z: time_format(
             appointments_selected[z]['date'] + appointments_selected[z]['hour']), reverse=(tag == 'closed'))
 
@@ -285,10 +285,11 @@ def make_reservations():
         logging.info(('reserve:', 'write data'))
         Process(target=save_data, args=(appointments, 'tickets.json')).start()
 
-        mail_content = '{}老师，{}（{}）预约了 {} ・ {} 的心理咨询。'.format(
-            ticket['teacher'], ticket['name'], ticket['mobile'], ticket['date'], ticket['hour'])
-        Process(target=send_mail, args=('limuhan@live.com', '新的心理咨询预约', mail_content)).start()
-        # TODO: 测试完成后将收件人改为 settings['emails'][ticket['teacher']]
+        mail_receiver = settings['emails'][ticket['teacher']] \
+            if ticket['name'] != '张三' else secrets['mailSettings']['maintainer']  # 测试账号
+        mail_content = '{}老师，{}预约了 {}{} 的心理咨询。'.format(
+            ticket['teacher'], '有同学', ticket['date'].split('·')[0], ticket['hour'][:5])
+        Process(target=send_mail, args=(mail_receiver, '新的心理咨询预约', mail_content)).start()
 
     try:
         write_data(request.json)
