@@ -78,15 +78,7 @@ Page({
                required: true,
                message: "请选择时间",
             },],
-         },
-         {
-            name: "detail",
-            rules: [{
-               required: true,
-               maxlength: 140,
-               message: "输入的字数过多",
-            },],
-         },
+         }
       ],
    },
 
@@ -257,6 +249,9 @@ Page({
                });
             }
          } else {
+            if(that.data.formData.detail=="" || that.data.formData.detail==null){
+               that.data.formData.detail="未填写";
+            }
             wx.showLoading({
                title: "提交中",
                mask: true,
