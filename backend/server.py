@@ -165,6 +165,11 @@ def admin_verification():
     """验证管理员密码"""
     admin = secrets['password'] == request.json.get('password')
     messages = {'statusCode': 200 if admin else 500}
+
+    if admin:
+        for data_file in database:
+            Process(target=save_data, args=(schedule, data_file)).start()
+        
     return construct_response(messages)
 
 
