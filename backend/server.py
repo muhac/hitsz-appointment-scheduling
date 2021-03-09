@@ -358,6 +358,12 @@ def edit_reservations():
                 Process(target=save_data, args=(schedule, 'schedules.json',
                                                 'cancel {}'.format(ticket_id))).start()
 
+                mail_receiver = settings['emails'][appointments[ticket_id]['teacher']] \
+                    if appointments[ticket_id]['name'] != '张三' else secrets['mailSettings']['maintainer']  # 测试账号
+                mail_content = '{}老师，{}取消了 {}{} 的心理咨询。'.format(
+                    appointments[ticket_id]['teacher'], '同学', date.split('·')[0], hour[:5])
+                Process(target=send_mail, args=(mail_receiver, '心理咨询预约取消通知', mail_content)).start()
+
             logging.info(('edit:', 'write data'))
             del appointments[ticket_id]
             Process(target=save_data, args=(appointments, 'tickets.json',
