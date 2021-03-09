@@ -1,139 +1,139 @@
 var rotateLeft = function (lValue, iShiftBits) {
-  return (lValue << iShiftBits) | (lValue >>> (32 - iShiftBits));
+   return (lValue << iShiftBits) | (lValue >>> (32 - iShiftBits));
 }
 
 var addUnsigned = function (lX, lY) {
-  var lX4, lY4, lX8, lY8, lResult;
-  lX8 = (lX & 0x80000000);
-  lY8 = (lY & 0x80000000);
-  lX4 = (lX & 0x40000000);
-  lY4 = (lY & 0x40000000);
-  lResult = (lX & 0x3FFFFFFF) + (lY & 0x3FFFFFFF);
-  if (lX4 & lY4) return (lResult ^ 0x80000000 ^ lX8 ^ lY8);
-  if (lX4 | lY4) {
+   var lX4, lY4, lX8, lY8, lResult;
+   lX8 = (lX & 0x80000000);
+   lY8 = (lY & 0x80000000);
+   lX4 = (lX & 0x40000000);
+   lY4 = (lY & 0x40000000);
+   lResult = (lX & 0x3FFFFFFF) + (lY & 0x3FFFFFFF);
+   if (lX4 & lY4) return (lResult ^ 0x80000000 ^ lX8 ^ lY8);
+   if (lX4 | lY4) {
       if (lResult & 0x40000000) return (lResult ^ 0xC0000000 ^ lX8 ^ lY8);
       else return (lResult ^ 0x40000000 ^ lX8 ^ lY8);
-  } else {
+   } else {
       return (lResult ^ lX8 ^ lY8);
-  }
+   }
 }
 
 var F = function (x, y, z) {
-  return (x & y) | ((~x) & z);
+   return (x & y) | ((~x) & z);
 }
 
 var G = function (x, y, z) {
-  return (x & z) | (y & (~z));
+   return (x & z) | (y & (~z));
 }
 
 var H = function (x, y, z) {
-  return (x ^ y ^ z);
+   return (x ^ y ^ z);
 }
 
 var I = function (x, y, z) {
-  return (y ^ (x | (~z)));
+   return (y ^ (x | (~z)));
 }
 
 var FF = function (a, b, c, d, x, s, ac) {
-  a = addUnsigned(a, addUnsigned(addUnsigned(F(b, c, d), x), ac));
-  return addUnsigned(rotateLeft(a, s), b);
+   a = addUnsigned(a, addUnsigned(addUnsigned(F(b, c, d), x), ac));
+   return addUnsigned(rotateLeft(a, s), b);
 };
 
 var GG = function (a, b, c, d, x, s, ac) {
-  a = addUnsigned(a, addUnsigned(addUnsigned(G(b, c, d), x), ac));
-  return addUnsigned(rotateLeft(a, s), b);
+   a = addUnsigned(a, addUnsigned(addUnsigned(G(b, c, d), x), ac));
+   return addUnsigned(rotateLeft(a, s), b);
 };
 
 var HH = function (a, b, c, d, x, s, ac) {
-  a = addUnsigned(a, addUnsigned(addUnsigned(H(b, c, d), x), ac));
-  return addUnsigned(rotateLeft(a, s), b);
+   a = addUnsigned(a, addUnsigned(addUnsigned(H(b, c, d), x), ac));
+   return addUnsigned(rotateLeft(a, s), b);
 };
 
 var II = function (a, b, c, d, x, s, ac) {
-  a = addUnsigned(a, addUnsigned(addUnsigned(I(b, c, d), x), ac));
-  return addUnsigned(rotateLeft(a, s), b);
+   a = addUnsigned(a, addUnsigned(addUnsigned(I(b, c, d), x), ac));
+   return addUnsigned(rotateLeft(a, s), b);
 };
 
 var convertToWordArray = function (string) {
-  var lWordCount;
-  var lMessageLength = string.length;
-  var lNumberOfWordsTempOne = lMessageLength + 8;
-  var lNumberOfWordsTempTwo = (lNumberOfWordsTempOne - (lNumberOfWordsTempOne % 64)) / 64;
-  var lNumberOfWords = (lNumberOfWordsTempTwo + 1) * 16;
-  var lWordArray = Array(lNumberOfWords - 1);
-  var lBytePosition = 0;
-  var lByteCount = 0;
-  while (lByteCount < lMessageLength) {
+   var lWordCount;
+   var lMessageLength = string.length;
+   var lNumberOfWordsTempOne = lMessageLength + 8;
+   var lNumberOfWordsTempTwo = (lNumberOfWordsTempOne - (lNumberOfWordsTempOne % 64)) / 64;
+   var lNumberOfWords = (lNumberOfWordsTempTwo + 1) * 16;
+   var lWordArray = Array(lNumberOfWords - 1);
+   var lBytePosition = 0;
+   var lByteCount = 0;
+   while (lByteCount < lMessageLength) {
       lWordCount = (lByteCount - (lByteCount % 4)) / 4;
       lBytePosition = (lByteCount % 4) * 8;
       lWordArray[lWordCount] = (lWordArray[lWordCount] | (string.charCodeAt(lByteCount) << lBytePosition));
       lByteCount++;
-  }
-  lWordCount = (lByteCount - (lByteCount % 4)) / 4;
-  lBytePosition = (lByteCount % 4) * 8;
-  lWordArray[lWordCount] = lWordArray[lWordCount] | (0x80 << lBytePosition);
-  lWordArray[lNumberOfWords - 2] = lMessageLength << 3;
-  lWordArray[lNumberOfWords - 1] = lMessageLength >>> 29;
-  return lWordArray;
+   }
+   lWordCount = (lByteCount - (lByteCount % 4)) / 4;
+   lBytePosition = (lByteCount % 4) * 8;
+   lWordArray[lWordCount] = lWordArray[lWordCount] | (0x80 << lBytePosition);
+   lWordArray[lNumberOfWords - 2] = lMessageLength << 3;
+   lWordArray[lNumberOfWords - 1] = lMessageLength >>> 29;
+   return lWordArray;
 };
 
 var wordToHex = function (lValue) {
-  var WordToHexValue = "",
+   var WordToHexValue = "",
       WordToHexValueTemp = "",
       lByte, lCount;
-  for (lCount = 0; lCount <= 3; lCount++) {
+   for (lCount = 0; lCount <= 3; lCount++) {
       lByte = (lValue >>> (lCount * 8)) & 255;
       WordToHexValueTemp = "0" + lByte.toString(16);
       WordToHexValue = WordToHexValue + WordToHexValueTemp.substr(WordToHexValueTemp.length - 2, 2);
-  }
-  return WordToHexValue;
+   }
+   return WordToHexValue;
 };
 
 var uTF8Encode = function (string) {
-  string = string.replace(/\x0d\x0a/g, "\x0a");
-  var output = "";
-  for (var n = 0; n < string.length; n++) {
+   string = string.replace(/\x0d\x0a/g, "\x0a");
+   var output = "";
+   for (var n = 0; n < string.length; n++) {
       var c = string.charCodeAt(n);
       if (c < 128) {
-          output += String.fromCharCode(c);
+         output += String.fromCharCode(c);
       } else if ((c > 127) && (c < 2048)) {
-          output += String.fromCharCode((c >> 6) | 192);
-          output += String.fromCharCode((c & 63) | 128);
+         output += String.fromCharCode((c >> 6) | 192);
+         output += String.fromCharCode((c & 63) | 128);
       } else {
-          output += String.fromCharCode((c >> 12) | 224);
-          output += String.fromCharCode(((c >> 6) & 63) | 128);
-          output += String.fromCharCode((c & 63) | 128);
+         output += String.fromCharCode((c >> 12) | 224);
+         output += String.fromCharCode(((c >> 6) & 63) | 128);
+         output += String.fromCharCode((c & 63) | 128);
       }
-  }
-  return output;
+   }
+   return output;
 };
 
 function md5(string) {
-  var x = Array();
-  var k, AA, BB, CC, DD, a, b, c, d;
-  var S11 = 7,
+   var x = Array();
+   var k, AA, BB, CC, DD, a, b, c, d;
+   var S11 = 7,
       S12 = 12,
       S13 = 17,
       S14 = 22;
-  var S21 = 5,
+   var S21 = 5,
       S22 = 9,
       S23 = 14,
       S24 = 20;
-  var S31 = 4,
+   var S31 = 4,
       S32 = 11,
       S33 = 16,
       S34 = 23;
-  var S41 = 6,
+   var S41 = 6,
       S42 = 10,
       S43 = 15,
       S44 = 21;
-  string = uTF8Encode(string);
-  x = convertToWordArray(string);
-  a = 0x67452301;
-  b = 0xEFCDAB89;
-  c = 0x98BADCFE;
-  d = 0x10325476;
-  for (k = 0; k < x.length; k += 16) {
+   string = uTF8Encode(string);
+   x = convertToWordArray(string);
+   a = 0x67452301;
+   b = 0xEFCDAB89;
+   c = 0x98BADCFE;
+   d = 0x10325476;
+   for (k = 0; k < x.length; k += 16) {
       AA = a;
       BB = b;
       CC = c;
@@ -206,9 +206,9 @@ function md5(string) {
       b = addUnsigned(b, BB);
       c = addUnsigned(c, CC);
       d = addUnsigned(d, DD);
-  }
-  var tempValue = wordToHex(a) + wordToHex(b) + wordToHex(c) + wordToHex(d);
-  return tempValue.toLowerCase();
+   }
+   var tempValue = wordToHex(a) + wordToHex(b) + wordToHex(c) + wordToHex(d);
+   return tempValue.toLowerCase();
 }
 
 module.exports.md5 = md5

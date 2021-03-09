@@ -1,7 +1,7 @@
 {
-  "navigationBarBackgroundColor": "#ffffff",
-  "navigationBarTextStyle": "black",
-  "navigationBarTitleText": "心理咨询预约",
-  "backgroundColor": "#eeeeee",
-  "backgroundTextStyle": "light"
+   "navigationBarBackgroundColor": "#ffffff",
+   "navigationBarTextStyle": "black",
+   "navigationBarTitleText": "心理咨询预约",
+   "backgroundColor": "#eeeeee",
+   "backgroundTextStyle": "light"
 }
