@@ -115,6 +115,8 @@ def save_data(data: Any, filename: str, detail: str = ':)') -> None:
         except Exception as e:
             # 仅作为备份，实时数据全在内存
             logging.error(('save data error:', filename, e))
+        else:
+            database_modified[filename] = time.time()
 
 
 def construct_response(msg: dict) -> Any:
