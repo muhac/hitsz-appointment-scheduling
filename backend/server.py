@@ -169,9 +169,13 @@ def admin_verification():
     messages = {'statusCode': 200 if admin else 500}
 
     if admin:
-        for data_file in database:
-            Process(target=save_data, args=(schedule, data_file)).start()
-        
+        Process(target=save_data, args=(dynamic, 'dynamic.json')).start()
+        Process(target=save_data, args=(secrets, 'secrets.json')).start()
+        Process(target=save_data, args=(settings, 'settings.json')).start()
+        Process(target=save_data, args=(schedule, 'schedules.json')).start()
+        Process(target=save_data, args=(appointments, 'tickets.json')).start()
+        Process(target=save_data, args=(appointments_closed, 'tickets_closed.json')).start()
+
     return construct_response(messages)
 
 
