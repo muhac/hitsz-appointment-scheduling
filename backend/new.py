@@ -22,7 +22,7 @@ settings = {
     'time_format': '%Y 年 %m 月 %d 日 · %A%H:00 · 大约 30 分钟',   # 拼接时间格式
     'work_days': ['周一', '周二', '周三', '周四', '周五'],          # 一般工作日
     'max_capacity': 1,                                          # 每个时间段最大预约人数
-    'max_days': 14,                                             # 最远可预约天数
+    'max_days': 15,                                             # 最远可预约天数
     'hour_before': 1,                                           # 至少提前预约小时数
     'ticket_format': '{:05d}@{}',                               # 工单ID格式
     'timestamp': '%Y-%m-%d %H:%M:%S',                           # 工单时间戳格式
