@@ -328,7 +328,7 @@ def make_reservations():
 
         mail_receiver = settings['emails'][ticket['teacher']] \
             if ticket['name'] != '张三' else secrets['mailSettings']['maintainer']  # 测试账号
-        mail_content = '{}老师，{}预约了 {}{} 的心理咨询。'.format(
+        mail_content = '{}老师，{}预约了 {}{} 的心理咨询。考虑到同学隐私，详细信息请在微信小程序查看。'.format(
             ticket['teacher'], '有同学', ticket['date'].split('·')[0], ticket['hour'][:5])
         Process(target=send_mail, args=(mail_receiver, '新的心理咨询预约', mail_content)).start()
 
@@ -371,9 +371,9 @@ def edit_reservations():
 
                 mail_receiver = settings['emails'][appointments[ticket_id]['teacher']] \
                     if appointments[ticket_id]['name'] != '张三' else secrets['mailSettings']['maintainer']  # 测试账号
-                mail_content = '{}老师，{}取消了 {}{} 的心理咨询。'.format(
-                    appointments[ticket_id]['teacher'], '同学', date.split('·')[0], hour[:5])
-                Process(target=send_mail, args=(mail_receiver, '心理咨询预约取消通知', mail_content)).start()
+                mail_content = '{}老师，{}取消了原定于 {}{} 的心理咨询。考虑到同学隐私，此记录已从系统抹除。'.format(
+                    appointments[ticket_id]['teacher'], '学生', date.split('·')[0], hour[:5])
+                Process(target=send_mail, args=(mail_receiver, '心理咨询预约取消', mail_content)).start()
 
             logging.info(('edit:', 'write data'))
             del appointments[ticket_id]
