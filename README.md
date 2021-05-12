@@ -1,3 +1,6 @@
-## 哈尔滨工业大学（深圳）<br>&emsp;&emsp;&emsp;<sub>&emsp;电子与信息工程学院</sub><br>&emsp;&emsp;&emsp;<sub>&emsp;&emsp;心理咨询预约系统</sub>
+## 哈尔滨工业大学（深圳）<br>&emsp;&emsp;&emsp;<sub>&emsp;&emsp;心理咨询预约系统</sub>
 
-![小程序二维码](./frontend/image/wxcode.jpg)
+##### 已接入电信学院与土木学院
+
+<img src="./frontend/image/wxcode.jpg" width=400>
+

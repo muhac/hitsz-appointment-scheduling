@@ -1,4 +1,4 @@
-name: Checkpoint Daily
+name: Automatic Checkpoint
 
 on:
   workflow_dispatch:
