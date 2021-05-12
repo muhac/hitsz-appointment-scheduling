@@ -1,4 +1,4 @@
-name: Checkpoint
+name: Checkpoint Daily
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ on:
     - cron: "30 22 * * *"
 
 jobs:
-  Report:
+  Checkpoint:
     runs-on: ubuntu-latest
 
     steps:
