@@ -57,6 +57,15 @@ logging.info(('Loaded data', settings, schedule,
               appointments, appointments_closed, dynamic))
 
 
+def checkpoint(msg='checkpoint'):
+    Process(target=save_data, args=(dynamic, 'dynamic.json', msg)).start()
+    Process(target=save_data, args=(secrets, 'secrets.json', msg)).start()
+    Process(target=save_data, args=(settings, 'settings.json', msg)).start()
+    Process(target=save_data, args=(schedule, 'schedules.json', msg)).start()
+    Process(target=save_data, args=(appointments, 'tickets.json', msg)).start()
+    Process(target=save_data, args=(appointments_closed, 'tickets_closed.json', msg)).start()
+
+
 class DataCheckException(Exception):
     """数据校验错误信息"""
 
@@ -135,6 +144,7 @@ CORS(app, resources=r'/*')  # 允许跨域请求
 @app.route('/', methods=['GET'])
 def index():
     """https://github.com/bugstop/hitsz-appointment-scheduling"""
+    checkpoint()
     messages = {'statusCode': 200, 'GitHub': 'bugstop', 'copyright': 2021}
     return construct_response(messages)
 
@@ -167,15 +177,6 @@ def admin_verification():
     """验证管理员密码"""
     admin = secrets['password'] == request.json.get('password')
     messages = {'statusCode': 200 if admin else 500}
-
-    if admin:
-        Process(target=save_data, args=(dynamic, 'dynamic.json')).start()
-        Process(target=save_data, args=(secrets, 'secrets.json')).start()
-        Process(target=save_data, args=(settings, 'settings.json')).start()
-        Process(target=save_data, args=(schedule, 'schedules.json')).start()
-        Process(target=save_data, args=(appointments, 'tickets.json')).start()
-        Process(target=save_data, args=(appointments_closed, 'tickets_closed.json')).start()
-
     return construct_response(messages)
 
 
