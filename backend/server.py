@@ -30,40 +30,27 @@ log_format = "%(asctime)s - %(levelname)s - %(message)s"
 logging.basicConfig(filename=log_file, level=logging.INFO, format=log_format)
 
 database = [
-    'secrets.json',         # 储存敏感信息
-    'settings.json',        # 储存基本设置
-    'schedules.json',       # 储存预约余量
-    'tickets.json',         # 储存进行中预约
+    'secrets.json',  # 储存敏感信息
+    'settings.json',  # 储存基本设置
+    'tickets_open.json',  # 储存进行中预约
     'tickets_closed.json',  # 储存已完成预约
-    'dynamic.json',         # 储存动态规则
+    'dynamic.json',  # 储存动态规则
 ]
 
 with open(path + '/data/secrets.json') as f_obj:
     secrets: dict = json.load(f_obj)
 with open(path + '/data/settings.json') as f_obj:
     settings: dict = json.load(f_obj)
-with open(path + '/data/schedules.json') as f_obj:
-    schedule: dict = json.load(f_obj)
-with open(path + '/data/tickets.json') as f_obj:
-    appointments: dict = json.load(f_obj)
+with open(path + '/data/tickets_open.json') as f_obj:
+    tickets: dict = json.load(f_obj)
 with open(path + '/data/tickets_closed.json') as f_obj:
-    appointments_closed: dict = json.load(f_obj)
+    tickets_closed: dict = json.load(f_obj)
 with open(path + '/data/dynamic.json') as f_obj:
     dynamic: dict = json.load(f_obj)
 
 # 记录各项数据最近备份时间
 database_modified = {data_file: time.time() for data_file in database}
-logging.info(('Loaded data', settings, schedule,
-              appointments, appointments_closed, dynamic))
-
-
-def checkpoint(msg='checkpoint'):
-    Process(target=save_data, args=(dynamic, 'dynamic.json', msg)).start()
-    Process(target=save_data, args=(secrets, 'secrets.json', msg)).start()
-    Process(target=save_data, args=(settings, 'settings.json', msg)).start()
-    Process(target=save_data, args=(schedule, 'schedules.json', msg)).start()
-    Process(target=save_data, args=(appointments, 'tickets.json', msg)).start()
-    Process(target=save_data, args=(appointments_closed, 'tickets_closed.json', msg)).start()
+logging.info(('Loaded data', settings, tickets, tickets_closed, dynamic))
 
 
 class DataCheckException(Exception):
@@ -112,9 +99,9 @@ def date_convert(date_format: str, lang: (str, str) = ('en', 'zh')) -> Callable:
     return lambda z: datetime.strptime(date_lang(z, lang), date_format)
 
 
-def save_data(data: Any, filename: str, detail: str = ':)') -> None:
-    """定时备份数据"""
-    if time.time() - database_modified[filename] < settings['checkpoint_frequency']:
+def save_data(data: Any, filename: str, detail: str = ':)', force: bool = False) -> None:
+    """备份数据"""
+    if not force and time.time() - database_modified[filename] < settings['checkpoint_frequency']:
         logging.info(('update skipped:', filename, detail))
     else:
         logging.warning(('update DATABASE:', filename, detail))
@@ -128,6 +115,15 @@ def save_data(data: Any, filename: str, detail: str = ':)') -> None:
             database_modified[filename] = time.time()
 
 
+def checkpoint(msg='force save'):
+    """强制保存所有数据"""
+    Process(target=save_data, args=(dynamic, 'dynamic.json', msg, True)).start()
+    Process(target=save_data, args=(secrets, 'secrets.json', msg, True)).start()
+    Process(target=save_data, args=(settings, 'settings.json', msg, True)).start()
+    Process(target=save_data, args=(tickets, 'tickets_open.json', msg, True)).start()
+    Process(target=save_data, args=(tickets_closed, 'tickets_closed.json', msg, True)).start()
+
+
 def construct_response(msg: dict) -> Any:
     """完成请求响应的构造"""
     response = make_response(jsonify(msg))
@@ -137,6 +133,39 @@ def construct_response(msg: dict) -> Any:
     return response
 
 
+def get_schedule_available(teacher_name, school_name):
+    unavailable = list()
+    for ticket in list(tickets.values()) + list(tickets_closed.values()):
+        if ticket['teacher'] == teacher_name:
+            unavailable.append((ticket['date'], ticket['hour']))
+
+    max_days = settings['school'][school_name]['最远可预约天数']
+    hrs_prep = settings['school'][school_name]['提前预约小时数']
+    working = settings['teacher'][school_name][teacher_name]['时间']
+
+    dates, hours = list(), dict()
+    for day in range(max_days):
+        date = date_lang(time_shift(days=day).strftime(settings['date_format']))
+        hours_available = working[datetime.weekday(datetime.today() + timedelta(days=day))]
+
+        if date in dynamic['off_days'] or not hours_available:
+            continue
+
+        hours[date] = list()
+        for hour_start in hours_available:
+            hour = settings['hour_format'].format(hour_start)
+            if (day == 0 and hour_start <= datetime.now().hour + hrs_prep + 1) \
+                    or (date, hour) in unavailable:  # 不可预约当日早些时候或该时段已有预约
+                continue
+
+            hours[date].append(hour)
+
+        if hours[date]:
+            dates.append(date)
+
+    return dates, {date: hours[date] for date in dates}
+
+
 app = Flask(__name__, )
 CORS(app, resources=r'/*')  # 允许跨域请求
 
@@ -144,7 +173,13 @@ CORS(app, resources=r'/*')  # 允许跨域请求
 @app.route('/', methods=['GET'])
 def index():
     """https://github.com/bugstop/hitsz-appointment-scheduling"""
-    checkpoint()
+    messages = {'statusCode': 200, 'GitHub': 'bugstop', 'copyright': 2021}
+    return construct_response(messages)
+
+
+@app.route('/checkpoint/', methods=['GET'])
+def checkpoint_save():
+    checkpoint('checkpoint')
     messages = {'statusCode': 200, 'GitHub': 'bugstop', 'copyright': 2021}
     return construct_response(messages)
 
@@ -180,63 +215,90 @@ def admin_verification():
     return construct_response(messages)
 
 
-@app.route('/plan/empty/', methods=['GET'])
-def schedule_available():
+@app.route('/plan/open/school', methods=['GET'])
+def open_ticket_school():
     """展示可供预约的时间段"""
 
-    def list_data(max_days: int = 14):
-        """筛选展示的时间段并排序"""
-        global schedule, dynamic
-
-        time_format = date_convert(settings['date_format'], ('zh', 'en'))
-        dates = sorted(list(schedule.keys()), key=lambda z: time_format(z))
-
-        # 检测数据完整性：是否包含从当日起共[max_days]天
-        if not dates or len(dates) != max_days or \
-                time_format(dates[0]) < time_shift(days=-1) or \
-                time_format(dates[-1]) < time_shift(days=max_days - 2):
-
-            schedule_new = dict()
-            for day in range(max_days):
-                date = date_lang(time_shift(days=day).strftime(settings['date_format']))
-                schedule_new[date] = dict()
-                for start in settings['work_start']:
-                    hour = settings['hour_format'].format(start)
-                    exist = date in dates and hour in list(schedule[date].keys())  # 此时间段可能已有预约
-                    schedule_new[date][hour] = schedule[date][hour] if exist else settings['max_capacity']
-
-            schedule = schedule_new
-            Process(target=save_data, args=(schedule, 'schedules.json')).start()
-
-        # 按照时间顺序排序
-        time_format = date_convert(settings['date_format'], ('zh', 'en'))
-        date_show = sorted(list(schedule.keys()), key=lambda z: time_format(z))
-        hour_show = sorted(list(schedule[date_show[0]].keys()), key=lambda z: int(z[:2]))
-
-        # 筛选出工作日，并剔除已无剩余预约名额的日期
-        date_show = [date for date in date_show if not any(off_day in date for off_day in dynamic['off_days'])
-                     and any(work_day in date for work_day in settings['work_days'] + dynamic['work_days'])
-                     and sum(schedule[date].values()) > 0]
-        schedule_show = {date: schedule[date] for date in date_show}
-
-        # 将当日早些时候的余量设为0
-        time_format = date_convert(settings['time_format'], ('zh', 'en'))
-        schedule_show[date_show[0]] = {hour: 0 if time_shift(hours=settings['hour_before']) > time_format(
-            date_show[0] + hour) else schedule_show[date_show[0]][hour] for hour in hour_show}
-
-        return schedule_show, date_show, hour_show
-
     try:
-        available = list_data(settings['max_days'])
         messages = {
             'statusCode': 200,
-            'date': available[1],
-            'hour': available[2],
-            'schedule': available[0],
-            'teachers': settings['teachers']
+            'schools': list(settings['school']),
+            'teachers': settings['school']
         }
     except Exception as e:
-        logging.error(('list schedule error:', e))
+        logging.error(('open ticket school error:', e))
+        messages = {'statusCode': 500}
+
+    return construct_response(messages)
+
+
+@app.route('/plan/open/schedule', methods=['GET'])
+def open_ticket_schedule():
+    """展示可供预约的时间段"""
+
+    try:
+        school_name = request.args.get('school')
+        teacher_name = request.args.get('teacher')
+        if not school_name or not teacher_name:
+            raise DataCheckException('school or teacher must be filled')
+
+        dates, hours = get_schedule_available(teacher_name, school_name)
+
+        messages = {
+            'statusCode': 200,
+            'dates': dates,
+            'hours': hours,
+        }
+
+    except Exception as e:
+        logging.error(('open ticket schedule error:', e))
+        messages = {'statusCode': 500}
+
+    return construct_response(messages)
+
+
+@app.route('/plan/open/', methods=['POST'])
+def open_ticket():
+    """预约心理咨询"""
+
+    def write_data(ticket):
+        """新增预约数据"""
+        global tickets, dynamic
+
+        # 验证数据完整性：是否有留空、是否在黑名单
+        if not all([ticket.get(item) for item in settings['must_fill']]) \
+                or ticket['wx'] in dynamic['blocked']:
+            raise DataCheckException('data check failed')
+
+        # 工单唯一ID形式为：流水号@时间戳
+        ticket_id = 0 if not tickets and not tickets_closed else max(map(
+            int, (tid.split('@')[0] for tid in list(tickets) + list(tickets_closed))))
+        new_ticket_id = settings['ticket_format'].format(ticket_id + 1, time_shift().strftime('%Y%m%d'))
+
+        dates, hours = get_schedule_available(ticket['teacher'], ticket['school'])
+        if not hours.get(ticket['date']) or ticket['hour'] not in hours.get(ticket['date']):
+            logging.error((ticket['date'], ticket['hour'], hours))
+            raise DataCheckException('invalid time')
+
+        ticket['status'] = 'open'  # 工单状态：open进行中，close已完成
+        ticket['timestamp'] = time_shift().strftime(settings['timestamp'])
+        tickets[new_ticket_id] = ticket
+
+        logging.info(('reserve:', 'write data'))
+        Process(target=save_data, args=(tickets, 'tickets_open.json', '{} {} {} {}'.format(
+            new_ticket_id, ticket['name'], ticket['date'].split('·')[0], ticket['hour'][:5]))).start()
+
+        mail_receiver = settings['emails'][ticket['teacher']] \
+            if ticket['name'] != '张三' else secrets['mailSettings']['maintainer']  # 测试账号
+        mail_content = '{}{}老师，{}预约了 {}{} 的心理咨询。考虑到同学隐私，详细信息请在微信小程序查看。'.format(
+            ticket['school'], ticket['teacher'], '有同学', ticket['date'].split('·')[0], ticket['hour'][:5])
+        Process(target=send_mail, args=(mail_receiver, '新的心理咨询预约', mail_content)).start()
+
+    try:
+        write_data(request.json)
+        messages = {'statusCode': 200}
+    except Exception as e:
+        logging.error(('make reservation error:', e))
         messages = {'statusCode': 500}
 
     return construct_response(messages)
@@ -248,37 +310,37 @@ def show_reservations():
 
     def list_data(user_filter: str, tag: str):
         """筛选展示的工单并排序"""
-        global appointments, appointments_closed
+        global tickets, tickets_closed
 
         if tag not in ['open', 'closed']:
             raise DataCheckException('key check failed')
 
         # 工单展示按预约时间顺序由近及远。工单ID仅作为唯一标识符，并不参与排序
-        appointments_selected = appointments if tag != 'closed' else appointments_closed
+        tickets_selected = tickets if tag != 'closed' else tickets_closed
         time_format = date_convert(settings['time_format'], ('zh', 'en'))
-        tickets = sorted(list(appointments_selected.keys()), key=lambda z: time_format(
-            appointments_selected[z]['date'] + appointments_selected[z]['hour']), reverse=(tag == 'closed'))
+        tickets_show = sorted(list(tickets_selected.keys()), key=lambda z: time_format(
+            tickets_selected[z]['date'] + tickets_selected[z]['hour']), reverse=(tag == 'closed'))
 
         # 自动关闭今天之前的工单
-        expired_appointments = list()
+        expired_tickets = list()
         time_format = date_convert(settings['date_format'], ('zh', 'en'))
-        while tickets and tag == 'open' and time_format(appointments[tickets[0]]['date']) < time_shift(days=-1):
-            ticket_id = tickets.pop(0)
-            appointments[ticket_id]['status'] = 'closed'  # TODO: expired
-            appointments_closed[ticket_id] = appointments[ticket_id]
-            del appointments[ticket_id]
-            expired_appointments.append(ticket_id)
-        if expired_appointments:
+        while tickets_show and tag == 'open' and time_format(tickets[tickets_show[0]]['date']) < time_shift(days=-1):
+            ticket_id = tickets_show.pop(0)
+            tickets[ticket_id]['status'] = 'closed'  # TODO: expired
+            tickets_closed[ticket_id] = tickets[ticket_id]
+            del tickets[ticket_id]
+            expired_tickets.append(ticket_id)
+        if expired_tickets:
             logging.info(('list:', 'close expired'))
-            Process(target=save_data, args=(appointments, 'tickets.json', 'close expired')).start()
-            Process(target=save_data, args=(appointments_closed, 'tickets_closed.json', expired_appointments)).start()
+            Process(target=save_data, args=(tickets, 'tickets_open.json', 'close expired')).start()
+            Process(target=save_data, args=(tickets_closed, 'tickets_closed.json', expired_tickets)).start()
 
         # 对于普通用户筛选出本人的预约，管理员可以查看所有预约
         if user_filter != secrets['password']:
-            tickets = [ticket for ticket in tickets if appointments_selected[ticket].get('wx') == user_filter]
-        appointments_filtered = {ticket: appointments_selected[ticket] for ticket in tickets}
+            tickets_show = [ticket for ticket in tickets_show if tickets_selected[ticket].get('wx') == user_filter]
+        tickets_filtered = {ticket: tickets_selected[ticket] for ticket in tickets_show}
 
-        return appointments_filtered, tickets
+        return tickets_filtered, tickets_show
 
     try:
         username = request.json.get('user')
@@ -296,96 +358,44 @@ def show_reservations():
     return construct_response(messages)
 
 
-@app.route('/plan/new/', methods=['POST'])
-def make_reservations():
-    """预约心理咨询"""
-
-    def write_data(ticket):
-        """新增预约数据"""
-        global schedule, appointments, dynamic
-
-        # 验证数据完整性：是否留空、是否有余量、是否在黑名单
-        if not all([ticket.get(item) for item in settings['must_fill']]) \
-                or schedule[ticket['date']][ticket['hour']] < 1 \
-                or ticket['wx'] in dynamic['blocked']:
-            raise DataCheckException('data check failed')
-
-        schedule[ticket['date']][ticket['hour']] -= 1
-        Process(target=save_data, args=(schedule, 'schedules.json', 'new {} {} {} {}'.format(
-            ticket['wx'], ticket['date'], ticket['hour'], ticket['teacher']))).start()
-
-        # 工单唯一ID形式为：流水号@时间戳
-        ticket_id = 0 if not appointments and not appointments_closed else max(map(
-            int, (tid.split('@')[0] for tid in list(appointments) + list(appointments_closed))))
-        new_ticket = settings['ticket_format'].format(ticket_id + 1, time_shift().strftime('%Y%m%d'))
-
-        ticket['status'] = 'open'  # 工单状态：open进行中，close已完成
-        ticket['timestamp'] = time_shift().strftime(settings['timestamp'])
-        appointments[new_ticket] = ticket
-
-        logging.info(('reserve:', 'write data'))
-        Process(target=save_data, args=(appointments, 'tickets.json', '{} {} {} {}'.format(
-            new_ticket, ticket['name'], ticket['date'].split('·')[0], ticket['hour'][:5]))).start()
-
-        mail_receiver = settings['emails'][ticket['teacher']] \
-            if ticket['name'] != '张三' else secrets['mailSettings']['maintainer']  # 测试账号
-        mail_content = '{}老师，{}预约了 {}{} 的心理咨询。考虑到同学隐私，详细信息请在微信小程序查看。'.format(
-            ticket['teacher'], '有同学', ticket['date'].split('·')[0], ticket['hour'][:5])
-        Process(target=send_mail, args=(mail_receiver, '新的心理咨询预约', mail_content)).start()
-
-    try:
-        write_data(request.json)
-        messages = {'statusCode': 200}
-    except Exception as e:
-        logging.error(('make reservation error:', e))
-        messages = {'statusCode': 500}
-
-    return construct_response(messages)
-
-
 @app.route('/plan/edit/', methods=['POST'])
 def edit_reservations():
     """更改心理咨询预约工单的状态"""
 
     def edit_data(username, ticket_id, operation):
         """修改预约数据"""
-        global schedule, appointments, appointments_closed
+        global tickets, tickets_closed
 
         # closed标注工单为已完成，cancel直接删除工单记录
         if operation not in ['closed', 'cancel']:
             raise DataCheckException('key check failed')
 
         # 对进行中的工单，本人和管理员有权限进行关闭或删除记录
-        if appointments.get(ticket_id) and username in (appointments[ticket_id]['wx'], secrets['password']):
-            date, hour = appointments[ticket_id]['date'], appointments[ticket_id]['hour']
-            appointments[ticket_id]['status'] = operation
+        if tickets.get(ticket_id) and username in (tickets[ticket_id]['wx'], secrets['password']):
+            date, hour = tickets[ticket_id]['date'], tickets[ticket_id]['hour']
+            tickets[ticket_id]['status'] = operation
 
             if operation == 'closed':
-                appointments_closed[ticket_id] = appointments[ticket_id]
-                Process(target=save_data, args=(appointments_closed, 'tickets_closed.json',
+                tickets_closed[ticket_id] = tickets[ticket_id]
+                Process(target=save_data, args=(tickets_closed, 'tickets_closed.json',
                                                 'close {}'.format(ticket_id))).start()
 
-            if operation == 'cancel' and date in schedule and hour in schedule[date]:
-                schedule[date][hour] += 1  # 删除后，可以恢复该时间段的预约人数
-                Process(target=save_data, args=(schedule, 'schedules.json',
-                                                'cancel {}'.format(ticket_id))).start()
-
-                mail_receiver = settings['emails'][appointments[ticket_id]['teacher']] \
-                    if appointments[ticket_id]['name'] != '张三' else secrets['mailSettings']['maintainer']  # 测试账号
+                mail_receiver = settings['emails'][tickets[ticket_id]['teacher']] \
+                    if tickets[ticket_id]['name'] != '张三' else secrets['mailSettings']['maintainer']  # 测试账号
                 mail_content = '{}老师，{}取消了原定于 {}{} 的心理咨询。考虑到同学隐私，此记录已从系统抹除。'.format(
-                    appointments[ticket_id]['teacher'], '学生', date.split('·')[0], hour[:5])
+                    tickets[ticket_id]['teacher'], '学生', date.split('·')[0], hour[:5])
                 Process(target=send_mail, args=(mail_receiver, '心理咨询预约取消', mail_content)).start()
 
             logging.info(('edit:', 'write data'))
-            del appointments[ticket_id]
-            Process(target=save_data, args=(appointments, 'tickets.json',
+            del tickets[ticket_id]
+            Process(target=save_data, args=(tickets, 'tickets_open.json',
                                             'delete {}'.format(ticket_id))).start()
 
         # 对已完成的工单，只有管理员有权限删除
-        elif operation == 'cancel' and appointments_closed.get(ticket_id) and username == secrets['password']:
+        elif operation == 'cancel' and tickets_closed.get(ticket_id) and username == secrets['password']:
             logging.info(('edit:', 'write data'))
-            del appointments_closed[ticket_id]
-            Process(target=save_data, args=(appointments_closed, 'tickets_closed.json',
+            del tickets_closed[ticket_id]
+            Process(target=save_data, args=(tickets_closed, 'tickets_closed.json',
                                             'delete {}'.format(ticket_id))).start()
 
         else:
@@ -393,8 +403,8 @@ def edit_reservations():
 
     try:
         uid = request.json.get('user')  # 用户的唯一ID，管理员传密码
-        tid = request.json.get('tid')   # 操作的工单ID
-        op = request.json.get('op')     # 操作选项（closed，cancel）
+        tid = request.json.get('tid')  # 操作的工单ID
+        op = request.json.get('op')  # 操作选项（closed，cancel）
         edit_data(uid, tid, op)
         messages = {'statusCode': 200}
     except Exception as e:
