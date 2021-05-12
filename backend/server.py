@@ -210,7 +210,7 @@ def get_uid():
 @app.route('/user/verify/', methods=['POST'])
 def admin_verification():
     """验证管理员密码"""
-    admin = secrets['password'] == request.json.get('password')
+    admin = request.json.get('password') in secrets['password']
     messages = {'statusCode': 200 if admin else 500}
     return construct_response(messages)
 
@@ -335,9 +335,13 @@ def show_reservations():
             Process(target=save_data, args=(tickets, 'tickets_open.json', 'close expired')).start()
             Process(target=save_data, args=(tickets_closed, 'tickets_closed.json', expired_tickets)).start()
 
-        # 对于普通用户筛选出本人的预约，管理员可以查看所有预约
-        if user_filter != secrets['password']:
-            tickets_show = [ticket for ticket in tickets_show if tickets_selected[ticket].get('wx') == user_filter]
+        # 对于普通用户筛选出本人的预约，管理员可以查看本专业所有预约
+        if user_filter not in secrets['password']:
+            tickets_show = [ticket for ticket in tickets_show
+                            if tickets_selected[ticket].get('wx') == user_filter]
+        else:
+            tickets_show = [ticket for ticket in tickets_show
+                            if tickets_selected[ticket].get('school') == secrets['password'][user_filter]]
         tickets_filtered = {ticket: tickets_selected[ticket] for ticket in tickets_show}
 
         return tickets_filtered, tickets_show
@@ -371,7 +375,7 @@ def edit_reservations():
             raise DataCheckException('key check failed')
 
         # 对进行中的工单，本人和管理员有权限进行关闭或删除记录
-        if tickets.get(ticket_id) and username in (tickets[ticket_id]['wx'], secrets['password']):
+        if tickets.get(ticket_id) and (username == tickets[ticket_id]['wx'] or username in secrets['password']):
             date, hour = tickets[ticket_id]['date'], tickets[ticket_id]['hour']
             tickets[ticket_id]['status'] = operation
 
@@ -392,7 +396,7 @@ def edit_reservations():
                                             'delete {}'.format(ticket_id))).start()
 
         # 对已完成的工单，只有管理员有权限删除
-        elif operation == 'cancel' and tickets_closed.get(ticket_id) and username == secrets['password']:
+        elif operation == 'cancel' and tickets_closed.get(ticket_id) and username in secrets['password']:
             logging.info(('edit:', 'write data'))
             del tickets_closed[ticket_id]
             Process(target=save_data, args=(tickets_closed, 'tickets_closed.json',

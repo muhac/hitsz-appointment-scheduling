@@ -3,7 +3,7 @@
 
   <mp-form-page title="心理咨询预约" subtitle="哈尔滨工业大学 · 深圳">
     <mp-form id="form" rules="{{rules}}" models="{{formData}}">
-      <mp-cells title="基本信息" footer="辅导员帮您预约心理咨询师，将为您进行心理咨询">
+      <mp-cells title="基本信息" footer="辅导员将为您进行心理咨询">
         <mp-cell prop="name" title="姓名" ext-class="">
           <input bindinput="formInputChange" data-field="name" class="weui-input" placeholder="请输入姓名"
             value="{{formData.name}}" />
