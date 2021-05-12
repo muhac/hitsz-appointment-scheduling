@@ -383,7 +383,7 @@ def edit_reservations():
                 tickets_closed[ticket_id] = tickets[ticket_id]
                 Process(target=save_data, args=(tickets_closed, 'tickets_closed.json',
                                                 'close {}'.format(ticket_id))).start()
-
+            if operation == 'cancel':
                 mail_receiver = settings['emails'][tickets[ticket_id]['teacher']] \
                     if tickets[ticket_id]['name'] != '张三' else secrets['mailSettings']['maintainer']  # 测试账号
                 mail_content = '{}老师，{}取消了原定于 {}{} 的心理咨询。考虑到同学隐私，此记录已从系统抹除。'.format(
