@@ -75,8 +75,7 @@ Page({
                      url: '/pages/index/index'
                   })
                }, 2000)
-            }
-            ;
+            };
          },
          fail() {
             wx.hideLoading();
@@ -141,8 +140,7 @@ Page({
                      url: '/pages/index/index'
                   })
                }, 2000)
-            }
-            ;
+            };
          },
          fail() {
             wx.hideLoading();

@@ -16,7 +16,6 @@
   /*脱离文档流*/
   margin-top: 45%;
   /*偏移*/
-
 }
 
 .weui-tab__content {

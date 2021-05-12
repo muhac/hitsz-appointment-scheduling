@@ -1,9 +1,9 @@
 <view class="page" data-weui-theme="{{theme}}">
   <mp-toptips msg="{{error}}" type="error" show="{{error}}"></mp-toptips>
 
-  <mp-form-page title="电信学院心理咨询预约" subtitle="信息楼 · L1103">
+  <mp-form-page title="心理咨询预约" subtitle="哈尔滨工业大学 · 深圳">
     <mp-form id="form" rules="{{rules}}" models="{{formData}}">
-      <mp-cells title="基本信息" footer="辅导员为您预约的心理咨询师，将为您进行心理咨询">
+      <mp-cells title="基本信息" footer="辅导员帮您预约心理咨询师，将为您进行心理咨询">
         <mp-cell prop="name" title="姓名" ext-class="">
           <input bindinput="formInputChange" data-field="name" class="weui-input" placeholder="请输入姓名"
             value="{{formData.name}}" />
@@ -18,16 +18,22 @@
           <input bindinput="formInputChange" data-field="id" class="weui-input" placeholder="请输入学号"
             value="{{formData.id}}" />
         </mp-cell>
-        <mp-cell prop="mobile" title="手机号" ext-class=" weui-cell_vcode">
+        <mp-cell prop="mobile" title="电话 " ext-class=" weui-cell_vcode">
           <input bindinput="formInputChange" data-field="mobile" class="weui-input" placeholder="请输入手机号"
             value="{{formData.mobile}}" />
         </mp-cell>
-
+        <mp-cell prop="school" title="学院" ext-class="">
+          <picker data-field="school" value="{{schoolIndex}}" range="{{dataSchool.schools}}"
+            bindchange="bindSchoolChange">
+            <view class="weui-input" wx:if="{{schoolIndex>-1}}">
+              {{dataSchool.teachers[dataSchool.schools[schoolIndex]]["地点"]}}</view>
+            <view class="weui-input" wx:else>请选择所在学院</view>
+          </picker>
+        </mp-cell>
         <mp-cell prop="teacher" title="辅导员" ext-class="">
-
-          <picker data-field="teacher" value="{{teacherIndex}}" range="{{list.teachers}}"
+          <picker data-field="teacher" value="{{teacherIndex}}" range="{{teacher_available}}"
             bindchange="bindTeacherChange">
-            <view class="weui-input" wx:if="{{teacherIndex>-1}}">{{list.teachers[teacherIndex]}}</view>
+            <view class="weui-input" wx:if="{{teacherIndex>-1}}">{{teacher_available[teacherIndex]}}</view>
             <view class="weui-input" wx:else>请选择辅导员</view>
           </picker>
         </mp-cell>
@@ -36,8 +42,8 @@
       <mp-cells title="预约信息">
         <mp-cell prop="date" title="预约日期" ext-class="">
 
-          <picker data-field="date" value="{{dateIndex}}" range="{{date_available}}" bindchange="bindDateChange">
-            <view class="weui-input" wx:if="{{dateIndex>-1}}">{{date_available[dateIndex]}}</view>
+          <picker data-field="date" value="{{dateIndex}}" range="{{dataSchedule.dates}}" bindchange="bindDateChange">
+            <view class="weui-input" wx:if="{{dateIndex>-1}}">{{dataSchedule.dates[dateIndex]}}</view>
             <view class="weui-input" wx:else>请选择日期</view>
           </picker>
         </mp-cell>

@@ -29,6 +29,10 @@
           <view class="weui-form-preview__value">{{reservations[tickets[index]].timestamp}}</view>
         </view>
         <view class="weui-form-preview__item">
+          <view class="weui-form-preview__label">学院</view>
+          <view class="weui-form-preview__value">{{reservations[tickets[index]].school}}</view>
+        </view>
+        <view class="weui-form-preview__item">
           <view class="weui-form-preview__label">辅导员</view>
           <view class="weui-form-preview__value">{{reservations[tickets[index]].teacher}}</view>
         </view>

@@ -1,6 +1,6 @@
 /* pages/admin_verify/admin_verify.wxss */
 
-.password-input{
+.password-input {
   margin-top: 50%;
   margin: 50rpx;
   padding: 20rpx 50rpx;

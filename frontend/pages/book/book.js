@@ -12,19 +12,20 @@ Page({
       hourIndex: -1,
       hourItem: {},
       teacherIndex: -1,
-      list: {},
+      dataSchool: {},
+      dataSchedule: {},
       date_available: [],
       hour_available: [],
 
       length: 0,
       formData: {},
       rules: [{
-         name: "wx",
-         rules: {
-            required: true,
-            message: "连接服务器失败，请稍候重试",
+            name: "wx",
+            rules: {
+               required: true,
+               message: "连接服务器失败，请稍候重试",
+            },
          },
-      },
          {
             name: "name",
             rules: {
@@ -49,9 +50,9 @@ Page({
          {
             name: "mobile",
             rules: [{
-               required: true,
-               message: "手机号码为必填项",
-            },
+                  required: true,
+                  message: "手机号码为必填项",
+               },
                {
                   mobile: true,
                   message: "手机号码格式不正确",
@@ -63,21 +64,21 @@ Page({
             rules: [{
                required: true,
                message: "请选择一名辅导员",
-            },],
+            }, ],
          },
          {
             name: "date",
             rules: [{
                required: true,
                message: "请选择日期",
-            },],
+            }, ],
          },
          {
             name: "hour",
             rules: [{
                required: true,
                message: "请选择时间",
-            },],
+            }, ],
          }
       ],
    },
@@ -130,32 +131,23 @@ Page({
          },
       });
       wx.request({
-         url: "https://www.bugstop.site/plan/empty/",
+         url: "https://www.bugstop.site/plan/open/school",
          headers: {
             "Content-Type": "application/json",
          },
-         success(res) {
-            //将获取到的json数据，存在名字叫list的这个数组中
 
+         success(res) {
             that.setData({
-               list: res.data,
-               //res代表success函数的事件对，data是固定的，list是数组
+               dataSchool: res.data,
+               dataSchedule: {
+                  'statusCode': 400,
+                  'dates': ["请先选择学院和辅导员"],
+                  'hours': {
+                     "请先选择学院和辅导员": ["请先选择学院和辅导员"],
+                  }
+               },
             });
-            let data = that.data.list.schedule;
-            var date_temp = [];
-            for (var index in data) {
-               var temp = 0;
-               for (var index2 in data[index]) {
-                  temp = temp + data[index][index2];
-               }
-               if (temp > 0) {
-                  date_temp.push(index);
-               }
-               that.setData({
-                  date_available: date_temp,
-                  //res代表success函数的事件对，data是固定的，list是数组
-               });
-            }
+
          },
          fail() {
             wx.showToast({
@@ -174,29 +166,67 @@ Page({
       });
    },
 
+   bindSchoolChange: function (e) {
+      var dataSchool = this.data.dataSchool;
+
+      this.setData({
+         schoolIndex: e.detail.value,
+         teacherIndex: -1,
+         dateIndex: -1,
+         hourIndex: -1,
+         teacher_available: dataSchool.teachers[dataSchool.schools[e.detail.value]].辅导员,
+         [`formData.school`]: dataSchool.schools[e.detail.value],
+      });
+   },
+
    bindTeacherChange: function (e) {
-      var list = this.data.list;
+      var that = this;
+      var teacher = this.data.teacher_available;
+
       this.setData({
          teacherIndex: e.detail.value,
-         [`formData.teacher`]: list.teachers[e.detail.value],
+         dateIndex: -1,
+         hourIndex: -1,
+         [`formData.teacher`]: teacher[e.detail.value],
+      });
+
+      wx.request({
+         url: "https://www.bugstop.site/plan/open/schedule?school=" + that.data.formData.school + "&teacher=" + that.data.formData.teacher,
+         headers: {
+            "Content-Type": "application/json",
+         },
+         success(res) {
+            that.setData({
+               dataSchedule: res.data,
+            });
+         },
+         fail() {
+            wx.showToast({
+               title: "连接超时，请稍候重试",
+               icon: "error", //如果要纯文本，不要icon，将值设为'none'
+               mask: true,
+            });
+         },
       });
    },
 
    bindDateChange: function (e) {
-      var list = this.data.list;
-      var date_available = this.data.date_available;
-      var date_select = date_available[e.detail.value];
+      var dataSchedule = this.data.dataSchedule;
 
-      var hour_temp = [];
-      for (var index in list.schedule[date_select]) {
-         if (list.schedule[date_select][index] > 0) {
-            hour_temp.push(index);
-         }
-      }
       this.setData({
          dateIndex: e.detail.value,
-         [`formData.date`]: date_select,
-         hour_available: hour_temp,
+         hourIndex: -1,
+         hour_available: dataSchedule.hours[dataSchedule.dates[e.detail.value]],
+         [`formData.date`]: dataSchedule.dates[e.detail.value],
+      });
+   },
+
+   bindHourChange: function (e) {
+      var hour_available = this.data.hour_available;
+
+      this.setData({
+         hourIndex: e.detail.value,
+         [`formData.hour`]: hour_available[e.detail.value],
       });
    },
 
@@ -213,14 +243,6 @@ Page({
       });
    },
 
-   bindHourChange: function (e) {
-      var hour_available = this.data.hour_available;
-
-      this.setData({
-         hourIndex: e.detail.value,
-         [`formData.hour`]: hour_available[e.detail.value],
-      });
-   },
    bindSexChange: function (e) {
       var sex = this.data.sex;
       wx.setStorage({
@@ -249,8 +271,8 @@ Page({
                });
             }
          } else {
-            if(that.data.formData.detail=="" || that.data.formData.detail==null){
-               that.data.formData.detail="未填写";
+            if (that.data.formData.detail == "" || that.data.formData.detail == null) {
+               that.data.formData.detail = "未填写";
             }
             wx.showLoading({
                title: "提交中",
@@ -258,7 +280,7 @@ Page({
             });
             console.log("submit:", formdata);
             wx.request({
-               url: "https://www.bugstop.site/plan/new/",
+               url: "https://www.bugstop.site/plan/open/",
                data: formdata,
                headers: {
                   "Content-Type": "application/json",
