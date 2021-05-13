@@ -152,13 +152,14 @@ def get_schedule_available(teacher_name, school_name):
             continue
 
         hours[date] = list()
-        for hour_start in hours_available:
-            hour = settings['hour_format'].format(hour_start)
-            if (day == 0 and hour_start <= datetime.now().hour + hrs_prep) \
-                    or (date, hour) in unavailable:  # 不可预约当日早些时候或该时段已有预约
-                continue
+        for hour_available in hours_available:
+            hour_start = [s.format(hour_available) for s in settings['hour_format']]
 
-            hours[date].append(hour)
+            for hour in hour_start:
+                if (day == 0 and hour_available <= datetime.now().hour + hrs_prep) \
+                        or (date, hour) in unavailable:  # 不可预约当日早些时候或该时段已有预约
+                    continue
+                hours[date].append(hour)
 
         if hours[date]:
             dates.append(date)
