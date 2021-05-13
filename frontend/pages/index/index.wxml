@@ -1,7 +1,6 @@
 <!--index.wxml-->
 
 <view class="container">
-
   <image bindtap="changebanner" src="../../image/{{banner}}.png" class="banner" mode="heightFix"></image>
   <view class="welcome">Have a Great Day!</view>
 
@@ -12,7 +11,7 @@
   </view>
 
   <view class="weui-footer footer">
-    <view><text>© 2021</text><text class="sep">·</text><text>Yjh & Lmh</text></view><br />
-    <view><text>哈工大深圳</text><text class="sep">·</text><text>电信学院</text></view>
+    <view><text>© 2021</text><text class="sep">·</text><text>v2.2.2</text></view><br />
+    <view><text>Yjh</text><text class="sep">&</text><text>Lmh</text></view>
   </view>
 </view>

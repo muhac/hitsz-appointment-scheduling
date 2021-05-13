@@ -56,7 +56,6 @@
           <view class="weui-form-preview__label">预约时间</view>
           <view class="weui-form-preview__value">{{reservations[tickets[index]].hour}}</view>
         </view>
-
         <view class="weui-form-preview__item">
           <view class="weui-form-preview__label">困惑与帮助</view>
           <view class="weui-form-preview__value">{{reservations[tickets[index]].detail}}</view>
@@ -68,7 +67,6 @@
           wx:if="{{activeIndex==0}}">取消预约</view>
       </view>
     </view>
-
   </view>
   <!--<view class="weui-footer">
     <view>Tips:过期的预约将会自动删除，请注意\n</view>

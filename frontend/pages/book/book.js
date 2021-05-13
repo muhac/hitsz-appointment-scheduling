@@ -10,8 +10,9 @@ Page({
 
       dateIndex: -1,
       hourIndex: -1,
-      hourItem: {},
       teacherIndex: -1,
+      schoolIndex: -1,
+      hourItem: {},
       dataSchool: {},
       dataSchedule: {},
       date_available: [],

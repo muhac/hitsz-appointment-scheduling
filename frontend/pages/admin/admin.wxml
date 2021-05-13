@@ -60,7 +60,6 @@
           <view class="weui-form-preview__label">预约时间</view>
           <view class="weui-form-preview__value">{{reservations[tickets[index]].hour}}</view>
         </view>
-
         <view class="weui-form-preview__item">
           <view class="weui-form-preview__label">困惑与帮助</view>
           <view class="weui-form-preview__value">{{reservations[tickets[index]].detail}}</view>
@@ -74,9 +73,7 @@
           class="weui-form-preview__btn weui-form-preview__btn_primary" hover-class="weui-form-preview__btn_active"
           wx:if="{{activeIndex==0}}">关闭</view>
       </view>
-
     </view>
-
   </view>
   <!--
   <view class="weui-footer">

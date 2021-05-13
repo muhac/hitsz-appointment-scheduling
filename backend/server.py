@@ -154,7 +154,7 @@ def get_schedule_available(teacher_name, school_name):
         hours[date] = list()
         for hour_start in hours_available:
             hour = settings['hour_format'].format(hour_start)
-            if (day == 0 and hour_start <= datetime.now().hour + hrs_prep + 1) \
+            if (day == 0 and hour_start <= datetime.now().hour + hrs_prep) \
                     or (date, hour) in unavailable:  # 不可预约当日早些时候或该时段已有预约
                 continue
 
@@ -288,9 +288,9 @@ def open_ticket():
         Process(target=save_data, args=(tickets, 'tickets_open.json', '{} {} {} {}'.format(
             new_ticket_id, ticket['name'], ticket['date'].split('·')[0], ticket['hour'][:5]))).start()
 
-        mail_receiver = settings['emails'][ticket['teacher']] \
+        mail_receiver = settings['teacher'][tickets[ticket_id]['school']][tickets[ticket_id]['teacher']]['邮箱'] \
             if ticket['name'] != '张三' else secrets['mailSettings']['maintainer']  # 测试账号
-        mail_content = '{}{}老师，{}预约了 {}{} 的心理咨询。考虑到同学隐私，详细信息请在微信小程序查看。'.format(
+        mail_content = '{}{}老师，{}预约了 {}{} 的心理咨询。详细信息请在微信小程序查看。'.format(
             ticket['school'], ticket['teacher'], '有同学', ticket['date'].split('·')[0], ticket['hour'][:5])
         Process(target=send_mail, args=(mail_receiver, '新的心理咨询预约', mail_content)).start()
 
@@ -384,9 +384,9 @@ def edit_reservations():
                 Process(target=save_data, args=(tickets_closed, 'tickets_closed.json',
                                                 'close {}'.format(ticket_id))).start()
             if operation == 'cancel':
-                mail_receiver = settings['emails'][tickets[ticket_id]['teacher']] \
+                mail_receiver = settings['teacher'][tickets[ticket_id]['school']][tickets[ticket_id]['teacher']]['邮箱'] \
                     if tickets[ticket_id]['name'] != '张三' else secrets['mailSettings']['maintainer']  # 测试账号
-                mail_content = '{}老师，{}取消了原定于 {}{} 的心理咨询。考虑到同学隐私，此记录已从系统抹除。'.format(
+                mail_content = '{}老师，{}取消了原定于 {}{} 的心理咨询。此记录已从系统抹除。'.format(
                     tickets[ticket_id]['teacher'], '学生', date.split('·')[0], hour[:5])
                 Process(target=send_mail, args=(mail_receiver, '心理咨询预约取消', mail_content)).start()
 
