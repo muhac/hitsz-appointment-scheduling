@@ -288,7 +288,7 @@ def open_ticket():
         Process(target=save_data, args=(tickets, 'tickets_open.json', '{} {} {} {}'.format(
             new_ticket_id, ticket['name'], ticket['date'].split('·')[0], ticket['hour'][:5]))).start()
 
-        mail_receiver = settings['teacher'][tickets[ticket_id]['school']][tickets[ticket_id]['teacher']]['邮箱'] \
+        mail_receiver = settings['teacher'][ticket['school']][ticket['teacher']]['邮箱'] \
             if ticket['name'] != '张三' else secrets['mailSettings']['maintainer']  # 测试账号
         mail_content = '{}{}老师，{}预约了 {}{} 的心理咨询。详细信息请在微信小程序查看。'.format(
             ticket['school'], ticket['teacher'], '有同学', ticket['date'].split('·')[0], ticket['hour'][:5])
@@ -376,7 +376,7 @@ def edit_reservations():
 
         # 对进行中的工单，本人和管理员有权限进行关闭或删除记录
         if tickets.get(ticket_id) and (username == tickets[ticket_id]['wx'] or username in secrets['password']):
-            date, hour = tickets[ticket_id]['date'], tickets[ticket_id]['hour']
+            ticket, date, hour = tickets[ticket_id], tickets[ticket_id]['date'], tickets[ticket_id]['hour']
             tickets[ticket_id]['status'] = operation
 
             if operation == 'closed':
@@ -384,7 +384,7 @@ def edit_reservations():
                 Process(target=save_data, args=(tickets_closed, 'tickets_closed.json',
                                                 'close {}'.format(ticket_id))).start()
             if operation == 'cancel':
-                mail_receiver = settings['teacher'][tickets[ticket_id]['school']][tickets[ticket_id]['teacher']]['邮箱'] \
+                mail_receiver = settings['teacher'][ticket['school']][ticket['teacher']]['邮箱'] \
                     if tickets[ticket_id]['name'] != '张三' else secrets['mailSettings']['maintainer']  # 测试账号
                 mail_content = '{}老师，{}取消了原定于 {}{} 的心理咨询。此记录已从系统抹除。'.format(
                     tickets[ticket_id]['teacher'], '学生', date.split('·')[0], hour[:5])
